@@ -1,0 +1,15 @@
+
+
+springboot:
+  jwt:
+    secret: keysec123
+spring:
+  datasource:
+    url: jdbc:mariadb://svc.sel5.cloudtype.app:30261/likelionblog?createDatabaseIfNotExist=true
+    username: root
+    password: 1234
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
