@@ -70,7 +70,12 @@ public class JwtProvider {
     }
 
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("Authorization").replace("Bearer ", "");
+        try {
+            return request.getHeader("Authorization").replace("Bearer ", "");
+        }catch (NullPointerException e){
+            logger.info("토큰이 없습니다.");
+            return "empty";
+        }
     }
 
     public boolean validToken(String token){
