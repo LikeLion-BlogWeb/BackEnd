@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @Service
 public class AuthServiceImpl implements AuthService {

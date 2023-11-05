@@ -27,6 +27,7 @@ public class PostController {
     public ResponseEntity<PostDTO> createPost(
             @RequestBody PostDTO postDTO
     ){
+        logger.info("[createPost] "+ postDTO.toString());
         return this.postService.createPost(postDTO);
     }
 
@@ -34,6 +35,7 @@ public class PostController {
     public ResponseEntity<PostDTO> readPost(
             @PathVariable("id") Long id
     ){
+        logger.info("[readPost] id : " + id);
         return this.postService.readPost(id);
     }
 
@@ -46,6 +48,7 @@ public class PostController {
     public ResponseEntity<PostDTO> updatePost(
             @RequestBody PostDTO postDTO
     ){
+        logger.info("[updatePost] "+postDTO.toString());
         return this.postService.updatePost(postDTO);
     }
 
@@ -53,6 +56,7 @@ public class PostController {
     public  ResponseEntity<Boolean> deletePost(
             @PathVariable("id") Long id
     ){
+        logger.info("[deletePost] id :" +id);
         return this.postService.deletePost(id);
     }
 
