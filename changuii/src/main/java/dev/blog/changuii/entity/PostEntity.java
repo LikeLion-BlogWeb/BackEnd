@@ -32,7 +32,6 @@ public class PostEntity {
     @Column
     private LocalDateTime writeDate;
 
-
     // SQL 예약어와 동일한 컬럼 사용불가 !!
     @Column
     @Builder.Default

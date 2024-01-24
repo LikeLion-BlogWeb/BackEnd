@@ -1,16 +1,40 @@
 
+# default
+spring:
+  profiles:
+    active: dev
+    group:
+      "prod" : "prod"
+      "dev" : "dev"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 springboot:
   jwt:
     secret: keysec123
+
+---
 spring:
+  config:
+    activate:
+      on-profile: prod
+
   datasource:
     url: jdbc:mariadb://mariadb/likelionblog?createDatabaseIfNotExist=true
     username: root
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/likelionblog?createDatabaseIfNotExist=true
+    username: root
+    password: 1234
+    driver-class-name: org.mariadb.jdbc.Driver
 
