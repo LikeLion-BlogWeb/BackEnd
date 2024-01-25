@@ -1,6 +1,7 @@
 package dev.blog.changuii.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.blog.changuii.dto.UserDTO;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,5 +77,14 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    public static UserEntity initUserEntity(UserDTO userDTO){
+        return UserEntity.builder()
+                .email(userDTO.getEmail())
+                .password(userDTO.getPassword())
+                .roles(Collections.singletonList("ROLE_USER"))
+                .build();
     }
 }

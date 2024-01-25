@@ -3,6 +3,10 @@ package dev.blog.changuii.controller;
 
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
+import dev.blog.changuii.exception.EmailDuplicationException;
+import dev.blog.changuii.exception.EmailNotExistException;
+import dev.blog.changuii.exception.EmailNullException;
+import dev.blog.changuii.exception.PasswordInvalidException;
 import dev.blog.changuii.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
 
     public AuthController(
@@ -31,16 +33,22 @@ public class AuthController {
     public ResponseEntity<UserDTO> signup(
             @RequestBody UserDTO userDTO
     ){
-        logger.info("[SignUp] "+userDTO.toString());
-        return this.authService.signup(userDTO);
+        try {
+            return ResponseEntity.status(201).body(this.authService.signup(userDTO));
+        }catch (EmailDuplicationException | EmailNullException e){
+            return ResponseEntity.status(400).body(UserDTO.builder().email(e.getMessage()).build());
+        }
     }
 
     @PostMapping("/signin")
     public ResponseEntity<TokenDTO> signin(
             @RequestBody UserDTO userDTO
     ){
-        logger.info("[SingIn] "+userDTO.toString());
-        return this.authService.signin(userDTO);
+        try{
+            return ResponseEntity.status(200).body(this.authService.signin(userDTO));
+        }catch (EmailNotExistException | PasswordInvalidException e){
+            return ResponseEntity.status(200).body(TokenDTO.builder().email(e.getMessage()).build());
+        }
     }
 
 }

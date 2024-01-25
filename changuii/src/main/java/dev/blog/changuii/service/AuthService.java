@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
 
-    public ResponseEntity<UserDTO> signup(UserDTO userDTO);
-    public ResponseEntity<TokenDTO> signin(UserDTO userDTO);
+    public UserDTO signup(UserDTO userDTO);
+    public TokenDTO signin(UserDTO userDTO);
 
 }
