@@ -52,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://main--strong-babka-cf237c.netlify.app");
+        configuration.addAllowedOrigin("https://kmu-likelion-blog.netlify.app");
         configuration.addAllowedOrigin("http://127.0.0.1:3000");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
