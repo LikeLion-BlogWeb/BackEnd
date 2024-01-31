@@ -2,10 +2,12 @@ package dev.blog.changuii.controller;
 
 
 import dev.blog.changuii.dto.PostDTO;
+import dev.blog.changuii.exception.PostNotFoundException;
 import dev.blog.changuii.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,37 +29,46 @@ public class PostController {
     public ResponseEntity<PostDTO> createPost(
             @RequestBody PostDTO postDTO
     ){
-        logger.info("[createPost] "+ postDTO.toString());
-        return this.postService.createPost(postDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.postService.createPost(postDTO));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDTO> readPost(
             @PathVariable("id") Long id
     ){
-        logger.info("[readPost] id : " + id);
-        return this.postService.readPost(id);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.postService.readPost(id));
+        }catch (PostNotFoundException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PostDTO.builder().title(e.getMessage()).build());
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<PostDTO>> readAllPost(){
-        return this.postService.readAllPost();
+        return ResponseEntity.status(HttpStatus.OK).body(this.postService.readAllPost());
     }
 
     @PutMapping
     public ResponseEntity<PostDTO> updatePost(
             @RequestBody PostDTO postDTO
     ){
-        logger.info("[updatePost] "+postDTO.toString());
-        return this.postService.updatePost(postDTO);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.postService.updatePost(postDTO));
+        }catch (PostNotFoundException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PostDTO.builder().title(e.getMessage()).build());
+        }
     }
 
     @DeleteMapping("/{id}")
     public  ResponseEntity<Boolean> deletePost(
             @PathVariable("id") Long id
     ){
-        logger.info("[deletePost] id :" +id);
-        return this.postService.deletePost(id);
+        try {
+            this.postService.deletePost(id);
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }catch (PostNotFoundException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        }
     }
 
 

@@ -3,6 +3,7 @@ package dev.blog.changuii.service.impl;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.entity.PostEntity;
+import dev.blog.changuii.exception.PostNotFoundException;
 import dev.blog.changuii.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,98 +29,49 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseEntity<PostDTO> createPost(PostDTO postDTO) {
-        PostEntity postEntity = PostEntity.builder()
-                .title(postDTO.getTitle())
-                .content(postDTO.getContent())
-                .email(postDTO.getEmail())
-                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
-                .likes(new ArrayList<>())
-                .views(0L).build();
+    public PostDTO createPost(PostDTO postDTO) {
+        PostEntity postEntity = PostEntity.DtoToEntity(postDTO);
+
         postEntity = this.postDAO.createPost(postEntity);
 
-        postDTO = PostDTO.builder()
-                .id(postEntity.getId())
-                .title(postEntity.getTitle())
-                .content(postEntity.getContent())
-                .email(postEntity.getEmail())
-                .writeDate(postEntity.getWriteDate().toString())
-                .like(postEntity.getLikes())
-                .views(postEntity.getViews()).build();
-
-        return ResponseEntity.status(201).body(postDTO);
+        return PostDTO.entityToDTO(postEntity);
     }
 
     @Override
-    public ResponseEntity<PostDTO> readPost(Long id) {
+    public PostDTO readPost(Long id) throws PostNotFoundException{
         Optional<PostEntity> post = this.postDAO.readPost(id);
-        if(!post.isPresent()){
-            return ResponseEntity.status(400).body(null);
-        }
-        PostEntity postEntity = post.get();
-        PostDTO postDTO = PostDTO.builder()
-                .id(postEntity.getId())
-                .title(postEntity.getTitle())
-                .content(postEntity.getContent())
-                .email(postEntity.getEmail())
-                .writeDate(postEntity.getWriteDate().toString())
-                .like(postEntity.getLikes())
-                .views(postEntity.getViews()).build();
 
+        PostEntity postEntity = post.orElseThrow(PostNotFoundException::new);
 
-        return ResponseEntity.status(200).body(postDTO);
+        return PostDTO.entityToDTO(postEntity);
     }
 
     @Override
-    public ResponseEntity<List<PostDTO>> readAllPost() {
-        List<PostEntity> postEntities = this.postDAO.readAllPost();
-        List<PostDTO> postDTOs = new ArrayList<>();
-        for(PostEntity postEntity : postEntities){
-            PostDTO postDTO = PostDTO.builder()
-                    .id(postEntity.getId())
-                    .title(postEntity.getTitle())
-                    .content(postEntity.getContent())
-                    .email(postEntity.getEmail())
-                    .writeDate(postEntity.getWriteDate().toString())
-                    .like(postEntity.getLikes())
-                    .views(postEntity.getViews()).build();
-            postDTOs.add(postDTO);
-        }
+    public List<PostDTO> readAllPost() {
 
-
-        return ResponseEntity.status(200).body(postDTOs);
+        return PostDTO.entityListToDTOList(
+                this.postDAO.readAllPost()
+        );
     }
 
     @Override
-    public ResponseEntity<PostDTO> updatePost(PostDTO postDTO) {
-        PostEntity postEntity = PostEntity.builder()
-                .id(postDTO.getId())
-                .title(postDTO.getTitle())
-                .content(postDTO.getContent())
-                .email(postDTO.getEmail())
-                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
-                .likes(postDTO.getLike())
-                .views(postDTO.getViews()).build();
+    public PostDTO updatePost(PostDTO postDTO)throws PostNotFoundException {
 
-        postEntity = this.postDAO.createPost(postEntity);
-        postDTO = PostDTO.builder()
-                .id(postEntity.getId())
-                .title(postEntity.getTitle())
-                .content(postEntity.getContent())
-                .email(postEntity.getEmail())
-                .writeDate(postEntity.getWriteDate().toString())
-                .like(postEntity.getLikes())
-                .views(postEntity.getViews()).build();
+        PostEntity before = this.postDAO.readPost(postDTO.getId())
+                .orElseThrow(PostNotFoundException::new);
 
-        return ResponseEntity.status(200).body(postDTO);
+        PostEntity after = this.postDAO.createPost(
+                PostEntity.updateEntity(before, postDTO)
+        );
+
+        return PostDTO.entityToDTO(after);
     }
 
     @Override
-    public ResponseEntity<Boolean> deletePost(Long id) {
-        if(!this.postDAO.deletePost(id)){
-            return ResponseEntity.status(400).body(false);
-        }
+    public void deletePost(Long id)throws PostNotFoundException {
+        if(!this.postDAO.existsPost(id))
+            throw new PostNotFoundException();
 
-        return ResponseEntity.status(200).body(true);
+        this.postDAO.deletePost(id);
     }
 }

@@ -39,12 +39,12 @@ public class PostDAOImpl implements PostDAO {
     }
 
     @Override
-    public boolean deletePost(Long id) {
-        if(this.postRepository.existsById(id)){
-            this.postRepository.deleteById(id);
-            return true;
-        }
+    public void deletePost(Long id) {
+        this.postRepository.deleteById(id);
+    }
 
-        return false;
+    @Override
+    public boolean existsPost(Long id) {
+        return this.postRepository.existsById(id);
     }
 }

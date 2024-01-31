@@ -1,0 +1,16 @@
+package dev.blog.changuii.exception;
+
+public class PostNotFoundException extends RuntimeException{
+
+    public PostNotFoundException() {
+        super("게시물이 존재하지 않습니다.");
+    }
+    public PostNotFoundException(String message) {
+        super(message);
+    }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
+}

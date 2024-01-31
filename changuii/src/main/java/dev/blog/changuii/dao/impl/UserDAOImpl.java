@@ -35,7 +35,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean deleteUser(String email) {
-        return this.userRepository.deleteByEmail(email);
+        return this.userRepository.deleteByEmail(email) > 0 ? true : false;
     }
 
     @Override

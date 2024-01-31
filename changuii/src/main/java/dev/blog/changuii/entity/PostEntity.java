@@ -1,5 +1,6 @@
 package dev.blog.changuii.entity;
 
+import dev.blog.changuii.dto.PostDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -40,5 +41,32 @@ public class PostEntity {
 
     @Column
     private Long views;
+
+
+    public static PostEntity DtoToEntity(PostDTO postDTO){
+        return PostEntity.builder()
+                .content(postDTO.getContent())
+                .email(postDTO.getEmail())
+                .title(postDTO.getTitle())
+                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
+                .likes(new ArrayList<>())
+                .views(0L).build();
+    }
+
+    public static PostEntity updateEntity(PostEntity postEntity, PostDTO postDTO){
+
+        return PostEntity.builder()
+                // 변경되지 않는
+                .id(postEntity.getId())
+                .views(postEntity.getViews())
+                .likes(postEntity.getLikes())
+                .writeDate(postEntity.getWriteDate())
+                .email(postEntity.getEmail())
+
+                // 변경되는 값
+                .content(postDTO.getContent())
+                .title(postDTO.getTitle())
+                .build();
+    }
 
 }
