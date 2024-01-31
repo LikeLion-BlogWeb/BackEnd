@@ -1,13 +1,12 @@
 package dev.blog.changuii.controller;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
 import dev.blog.changuii.exception.EmailDuplicationException;
 import dev.blog.changuii.exception.EmailNullException;
+import dev.blog.changuii.exception.PasswordInvalidException;
 import dev.blog.changuii.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -125,8 +124,6 @@ public class AuthControllerTest {
 
         // then
         verify(authService).signup(refEq(user1));
-
-
     }
 
 
@@ -154,6 +151,30 @@ public class AuthControllerTest {
         verify(authService).signin(refEq(user1));
     }
 
+
+    @Test
+    @DisplayName("잘못된 비밀번호로 로그인")
+    public void pwInvalidSignInTest() throws Exception {
+
+        String message = "잘못된 비밀번호입니다.";
+
+        // given
+        given(authService.signin(refEq(user1)))
+                .willThrow(new PasswordInvalidException(message));
+
+        // when
+        mockMvc.perform(
+                post("/auth/signin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user1)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.email").value(message))
+                .andExpect(jsonPath("$.token").isEmpty())
+                .andDo(print());
+
+        // then
+        verify(authService).signin(refEq(user1));
+    }
 
 
 

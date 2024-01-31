@@ -1,6 +1,6 @@
 package dev.blog.changuii.service;
 
-
+import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
@@ -9,83 +9,109 @@ import dev.blog.changuii.exception.EmailDuplicationException;
 import dev.blog.changuii.exception.EmailNotExistException;
 import dev.blog.changuii.exception.EmailNullException;
 import dev.blog.changuii.exception.PasswordInvalidException;
+import dev.blog.changuii.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
+@Import({AuthServiceImpl.class})
 public class AuthServiceTest {
 
+    private final AuthServiceImpl authService;
 
-    private final AuthService authService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthServiceTest.class);
     @MockBean
     private UserDAO userDAO;
-    private final PasswordEncoder passwordEncoder;
-    private final UserDTO userDTO = new UserDTO();
+    @MockBean
+    private PasswordEncoder passwordEncoder;
+    @MockBean
+    private JwtProvider jwtProvider;
+
+    private UserDTO user1;
+    private UserDTO user2;
+    private UserDTO user3;
 
     public AuthServiceTest(
-            @Autowired AuthService authService,
-            @Autowired PasswordEncoder passwordEncoder
+            @Autowired AuthServiceImpl authService
     ){
         this.authService = authService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @BeforeEach
     public void setUp(){
-        userDTO.setEmail("asd123@naver.com");
-        userDTO.setPassword("1234");
-        logger.info("UserDTO 초기화 완료 : "+ userDTO);
+        user1 = new UserDTO("asd123@naver.com", "12345678");
+        user2 = new UserDTO("abcdefg@naver.com", "87654321");
+        user3 = new UserDTO("abc123@daum.net", "24682468");
     }
 
     @Test
     @DisplayName("회원가입")
     public void signUpTest(){
         // given
-        UserEntity userEntity = UserEntity.initUserEntity(userDTO);
+        UserEntity userEntity = UserEntity.initUserEntity(user1);
 
-        when(this.userDAO.createUser(any())).thenReturn(userEntity);
+        when(this.userDAO.createUser(refEq(userEntity))).thenReturn(userEntity);
         when(this.userDAO.existByEmail(userEntity.getEmail())).thenReturn(false);
+        when(this.passwordEncoder.encode(userEntity.getPassword())).thenReturn(userEntity.getPassword());
 
         // when
-        UserDTO after = this.authService.signup(this.userDTO);
+        UserDTO after = this.authService.signup(user1);
 
         // then
-        this.checkUserDTO(userDTO, after);
+        assertThat(user1.getEmail()).isEqualTo(after.getEmail());
+
+        verify(userDAO).createUser(refEq(userEntity));
+        verify(userDAO).existByEmail(userEntity.getEmail());
+        verify(passwordEncoder).encode(userEntity.getPassword());
     }
 
     @Test
     @DisplayName("Null 회원가입")
     public void nullDataSignUpTest(){
+        // given
         when(this.userDAO.existByEmail(null)).thenReturn(false);
-        when(this.userDAO.createUser(any())).thenThrow(NullPointerException.class);
+        when(this.passwordEncoder.encode(null)).thenThrow(NullPointerException.class);
+
+        //when
         assertThatThrownBy(() -> {
 
             this.authService.signup(new UserDTO());
+
+            // then
         }).isInstanceOf(EmailNullException.class);
+
+        verify(this.userDAO).existByEmail(null);
+        verify(this.passwordEncoder).encode(null);
+
     }
 
     @Test
     @DisplayName("중복 회원가입")
     public void duplicateEmailSignUpTest(){
-        when(this.userDAO.existByEmail(this.userDTO.getEmail())).thenReturn(true);
+        //given
+        when(this.userDAO.existByEmail(this.user1.getEmail())).thenReturn(true);
 
+        //when
         assertThatThrownBy(()->{
-            this.authService.signup(userDTO);
+            this.authService.signup(user1);
 
+        // then
         }).isInstanceOf(EmailDuplicationException.class);
 
     }
@@ -93,56 +119,66 @@ public class AuthServiceTest {
     @Test
     @DisplayName("로그인")
     public void signInTest(){
-        UserEntity userEntity = UserEntity.initUserEntity(
-                UserDTO.builder().email(userDTO.getEmail()).password(passwordEncoder.encode(userDTO.getPassword())).build());
+        //given
+        UserEntity userEntity = UserEntity.initUserEntity(user1);
+        String token = "ABCDEFG";
 
-        when(this.userDAO.existByEmail(userDTO.getEmail())).thenReturn(true);
-        when(this.userDAO.readUser(any())).thenReturn(userEntity);
+        when(this.userDAO.existByEmail(user1.getEmail())).thenReturn(true);
+        when(this.userDAO.readUser(userEntity.getEmail())).thenReturn(userEntity);
+        when(this.passwordEncoder.matches(user1.getPassword(), userEntity.getPassword())).thenReturn(true);
+        when(this.jwtProvider.createToken(userEntity.getEmail(), userEntity.getRoles())).thenReturn(token);
+
+        //when
+        TokenDTO after = this.authService.signin(user1);
 
 
-        TokenDTO after = this.authService.signin(userDTO);
+        //then
+        assertThat(after.getEmail()).isEqualTo(user1.getEmail());
+        assertThat(after.getToken()).startsWith("Bearer ").contains(token);
 
+        verify(this.userDAO).existByEmail(user1.getEmail());
+        verify(this.userDAO).readUser(userEntity.getEmail());
+        verify(this.passwordEncoder).matches(user1.getPassword(), userEntity.getPassword());
+        verify(this.jwtProvider).createToken(userEntity.getEmail(), userEntity.getRoles());
 
-        TokenDTO tokenDTO = TokenDTO.builder().email(userDTO.getEmail()).build();
-        this.checkTokenDTO(tokenDTO, after);
     }
 
     @Test
     @DisplayName("회원가입 이전 로그인")
     public void beforeSignUpSignInTest(){
+        //given
+        when(userDAO.existByEmail(user1.getEmail())).thenReturn(false);
 
-        when(userDAO.existByEmail(userDTO.getEmail())).thenReturn(false);
-
+        //when
         assertThatThrownBy(()->{
-            this.authService.signin(userDTO);
+            this.authService.signin(user1);
+        //then
         }).isInstanceOf(EmailNotExistException.class);
+        verify(this.userDAO).existByEmail(user1.getEmail());
     }
 
     @Test
     @DisplayName("잘못된 비밀번호 로그인")
     public void passwordInvalidSignInTest(){
-        UserEntity userEntity = UserEntity.initUserEntity(
-                UserDTO.builder().email(userDTO.getEmail()).password(passwordEncoder.encode(userDTO.getPassword())).build());
 
-        when(this.userDAO.existByEmail(userDTO.getEmail())).thenReturn(true);
-        when(this.userDAO.readUser(any())).thenReturn(userEntity);
+        //given
+        UserEntity userEntity = UserEntity.initUserEntity(user1);
+        user1.setPassword("123");
+
+        when(this.userDAO.existByEmail(user1.getEmail())).thenReturn(true);
+        when(this.userDAO.readUser(user1.getEmail())).thenReturn(userEntity);
+        when(this.passwordEncoder.matches(user1.getPassword(), userEntity.getPassword())).thenReturn(false);
+
         assertThatThrownBy(()->{
-            userDTO.setPassword("123");
+            this.authService.signin(user1);
 
-            this.authService.signin(userDTO);
-
+        // then
         }).isInstanceOf(PasswordInvalidException.class);
 
+        verify(this.userDAO).existByEmail(user1.getEmail());
+        verify(this.userDAO).readUser(user1.getEmail());
+        verify(this.passwordEncoder).matches(user1.getPassword(), userEntity.getPassword());
+
     }
 
-
-
-    private void checkUserDTO(UserDTO before, UserDTO after){
-        assertThat(before.getEmail()).isEqualTo(after.getEmail());
-    }
-
-    private void checkTokenDTO(TokenDTO before, TokenDTO after){
-        assertThat(before.getEmail()).isEqualTo(after.getEmail());
-        assertThat(after.getToken()).startsWith("Bearer ");
-    }
 }

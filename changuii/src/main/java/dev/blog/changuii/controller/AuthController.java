@@ -47,7 +47,7 @@ public class AuthController {
         try{
             return ResponseEntity.status(200).body(this.authService.signin(userDTO));
         }catch (EmailNotExistException | PasswordInvalidException e){
-            return ResponseEntity.status(200).body(TokenDTO.builder().email(e.getMessage()).build());
+            return ResponseEntity.status(400).body(TokenDTO.builder().email(e.getMessage()).build());
         }
     }
 
