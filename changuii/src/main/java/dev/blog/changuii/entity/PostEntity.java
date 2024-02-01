@@ -53,6 +53,16 @@ public class PostEntity {
                 .views(0L).build();
     }
 
+    public static PostEntity initEntity(PostDTO postDTO){
+        return PostEntity.builder()
+                .content(postDTO.getContent())
+                .email(postDTO.getEmail())
+                .title(postDTO.getTitle())
+                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
+                .likes(new ArrayList<>())
+                .views(0L).build();
+    }
+
     public static PostEntity updateEntity(PostEntity postEntity, PostDTO postDTO){
 
         return PostEntity.builder()

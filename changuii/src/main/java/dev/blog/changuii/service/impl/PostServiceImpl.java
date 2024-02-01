@@ -30,7 +30,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDTO createPost(PostDTO postDTO) {
-        PostEntity postEntity = PostEntity.DtoToEntity(postDTO);
+        PostEntity postEntity = PostEntity.initEntity(postDTO);
 
         postEntity = this.postDAO.createPost(postEntity);
 
