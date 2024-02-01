@@ -49,8 +49,8 @@ public class PostEntity {
                 .email(postDTO.getEmail())
                 .title(postDTO.getTitle())
                 .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
-                .likes(new ArrayList<>())
-                .views(0L).build();
+                .likes(postDTO.getLike())
+                .views(postDTO.getViews()).build();
     }
 
     public static PostEntity initEntity(PostDTO postDTO){
