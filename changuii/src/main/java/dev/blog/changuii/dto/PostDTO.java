@@ -3,6 +3,7 @@ package dev.blog.changuii.dto;
 
 import dev.blog.changuii.entity.PostEntity;
 import lombok.*;
+import org.hibernate.validator.constraints.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +16,22 @@ import java.util.List;
 @NoArgsConstructor
 public class PostDTO {
     private Long id;
+
+    @NotBlank(message = "게시글 제목이 없습니다.")
     private String title;
+
+    @NotBlank(message = "게시글 내용이 없습니다.")
     private String content;
+
+    @NotBlank(message = "작성자 이메일은 필수 값입니다.")
+    @Email(message = "작성자 이메일의 형식이 잘못되었습니다.")
     private String email;
+
     private String writeDate;
+
     @Builder.Default
     private List<String> like = new ArrayList<>();
+
     private Long views;
 
 

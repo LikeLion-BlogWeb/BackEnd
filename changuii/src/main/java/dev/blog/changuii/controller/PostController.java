@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,9 +28,11 @@ public class PostController {
         this.postService = postService;
     }
 
+    // PostNotFoundException은 ExceptionAdvisor에서 모두 처리
+
     @PostMapping
     public ResponseEntity<PostDTO> createPost(
-            @RequestBody PostDTO postDTO
+            @Valid @RequestBody PostDTO postDTO
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(this.postService.createPost(postDTO));
     }
@@ -36,11 +41,7 @@ public class PostController {
     public ResponseEntity<PostDTO> readPost(
             @PathVariable("id") Long id
     ){
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(this.postService.readPost(id));
-        }catch (PostNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PostDTO.builder().title(e.getMessage()).build());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(this.postService.readPost(id));
     }
 
     @GetMapping
@@ -52,23 +53,15 @@ public class PostController {
     public ResponseEntity<PostDTO> updatePost(
             @RequestBody PostDTO postDTO
     ){
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(this.postService.updatePost(postDTO));
-        }catch (PostNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PostDTO.builder().title(e.getMessage()).build());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(this.postService.updatePost(postDTO));
     }
 
     @DeleteMapping("/{id}")
     public  ResponseEntity<Boolean> deletePost(
             @PathVariable("id") Long id
     ){
-        try {
-            this.postService.deletePost(id);
-            return ResponseEntity.status(HttpStatus.OK).body(true);
-        }catch (PostNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-        }
+        this.postService.deletePost(id);
+        return ResponseEntity.status(HttpStatus.OK).body(true);
     }
 
 

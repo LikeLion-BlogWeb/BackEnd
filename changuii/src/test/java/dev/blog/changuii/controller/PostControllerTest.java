@@ -35,8 +35,10 @@ public class PostControllerTest {
     private final MockMvc mockMvc;
     @MockBean
     private PostService postService;
+    // spring security filter 의존성
     @MockBean
     private JwtProvider jwtProvider;
+    //
 
     private PostDTO post1;
     private PostDTO post2;
@@ -130,12 +132,7 @@ public class PostControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.id").isEmpty())
-                .andExpect(jsonPath("$.title").value(e.getMessage()))
-                .andExpect(jsonPath("$.content").isEmpty())
-                .andExpect(jsonPath("$.email").isEmpty())
-                .andExpect(jsonPath("$.like").isEmpty())
-                .andExpect(jsonPath("$.views").isEmpty())
+                .andExpect(content().string(e.getMessage()))
                 .andDo(print());
 
         //then
@@ -249,12 +246,7 @@ public class PostControllerTest {
                                 .content(new ObjectMapper().writeValueAsString(after1))
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.id").isEmpty())
-                .andExpect(jsonPath("$.title").value(e.getMessage()))
-                .andExpect(jsonPath("$.content").isEmpty())
-                .andExpect(jsonPath("$.email").isEmpty())
-                .andExpect(jsonPath("$.like").isEmpty())
-                .andExpect(jsonPath("$.views").isEmpty())
+                .andExpect(content().string(e.getMessage()))
                 .andDo(print());
 
         //then
@@ -298,7 +290,7 @@ public class PostControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("false"))
+                .andExpect(content().string(e.getMessage()))
                 .andDo(print());
 
         //then
