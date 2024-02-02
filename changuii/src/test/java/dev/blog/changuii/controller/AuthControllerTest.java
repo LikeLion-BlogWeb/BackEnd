@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
 public class AuthControllerTest {
@@ -82,9 +81,11 @@ public class AuthControllerTest {
     @DisplayName("중복 이메일 가입")
     public void duplicationSignUp() throws Exception {
 
+        Throwable e = new EmailDuplicationException();
+
         //given
         given(authService.signup(refEq(user1)))
-                .willThrow(new EmailDuplicationException("잘못된 요청입니다."));
+                .willThrow(e);
 
         //when
         mockMvc.perform(
@@ -93,8 +94,7 @@ public class AuthControllerTest {
                         .content(new ObjectMapper().writeValueAsString(user1))
         )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.email").exists())
-                .andExpect(jsonPath("$.password").isEmpty())
+                .andExpect(content().string(e.getMessage()))
                 .andDo(print());
 
         //then
@@ -107,9 +107,7 @@ public class AuthControllerTest {
 
         user1.setEmail(null);
 
-        //given
-        given(authService.signup(refEq(user1)))
-                .willThrow(new EmailNullException("잘못된 요청입니다."));
+        //given 유효성 검증 통과 실패
 
         //when
         mockMvc.perform(
@@ -118,12 +116,9 @@ public class AuthControllerTest {
                         .content(new ObjectMapper().writeValueAsString(user1))
         )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.email").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.password").isEmpty())
                 .andDo(print());
 
         // then
-        verify(authService).signup(refEq(user1));
     }
 
 
@@ -156,11 +151,11 @@ public class AuthControllerTest {
     @DisplayName("잘못된 비밀번호로 로그인")
     public void pwInvalidSignInTest() throws Exception {
 
-        String message = "잘못된 비밀번호입니다.";
+        Throwable e = new PasswordInvalidException();
 
         // given
         given(authService.signin(refEq(user1)))
-                .willThrow(new PasswordInvalidException(message));
+                .willThrow(e);
 
         // when
         mockMvc.perform(
@@ -168,8 +163,7 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(user1)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.email").value(message))
-                .andExpect(jsonPath("$.token").isEmpty())
+                .andExpect(content().string(e.getMessage()))
                 .andDo(print());
 
         // then

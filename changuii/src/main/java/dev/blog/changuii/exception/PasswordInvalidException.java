@@ -2,12 +2,8 @@ package dev.blog.changuii.exception;
 
 public class PasswordInvalidException extends RuntimeException{
     public PasswordInvalidException() {
+        super("password가 유효하지 않습니다.");
     }
-
-    public PasswordInvalidException(String message) {
-        super(message);
-    }
-
     @Override
     public String getMessage() {
         return super.getMessage();

@@ -51,7 +51,7 @@ public class PostController {
 
     @PutMapping
     public ResponseEntity<PostDTO> updatePost(
-            @RequestBody PostDTO postDTO
+            @Valid @RequestBody PostDTO postDTO
     ){
         return ResponseEntity.status(HttpStatus.OK).body(this.postService.updatePost(postDTO));
     }

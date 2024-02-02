@@ -2,10 +2,7 @@ package dev.blog.changuii.exception;
 
 public class EmailNullException extends RuntimeException{
     public EmailNullException() {
-    }
-
-    public EmailNullException(String message) {
-        super(message);
+        super("email 값이 유효하지 않습니다.");
     }
 
     @Override
