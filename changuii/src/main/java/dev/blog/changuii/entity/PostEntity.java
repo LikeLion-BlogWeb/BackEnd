@@ -19,6 +19,7 @@ import java.util.List;
 public class PostEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
     @Column
@@ -42,6 +43,9 @@ public class PostEntity {
     @Column
     private Long views;
 
+    @OneToMany(mappedBy = "post",
+            cascade = { CascadeType.PERSIST}, orphanRemoval = true)
+    private List<CommentEntity> comments = new ArrayList<>();
 
     public static PostEntity DtoToEntity(PostDTO postDTO){
         return PostEntity.builder()

@@ -2,7 +2,7 @@
 # default
 spring:
   profiles:
-    active: prod
+    active: dev
     group:
       "prod" : "prod"
       "dev" : "dev, local"
