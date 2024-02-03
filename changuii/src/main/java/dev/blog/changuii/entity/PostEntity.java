@@ -28,8 +28,9 @@ public class PostEntity {
     @Column
     private String content;
 
-    @Column
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email")
+    private UserEntity userEntity;
 
     @Column
     private LocalDateTime writeDate;
@@ -43,8 +44,18 @@ public class PostEntity {
     @Column
     private Long views;
 
-    @OneToMany(mappedBy = "post",
-            cascade = { CascadeType.PERSIST}, orphanRemoval = true)
+//    김영한
+//    안녕하세요. donald님
+//    이 경우 OnDelete, OnUpdate같은 방법을 사용하는 것은 오히려 복잡해지고, 좋지 않은 방법입니다.
+//    JPA는 객제지향 스타일로 개발 하는 것이 원칙입니다.
+//    따라서 부모 엔티티를 삭제하기 전에 자식 엔티티를 찾고, 부모 엔티티와 연관관계를 null 처리 하는 것이 맞습니다.
+
+    // mappedBy가 없는 쪽이 연관관계의 주인이 된다. (+ JoinColumn)
+    // 오직 연관관계의 주인만 연관관계를 수정할 수 있다. (오직 조회만 가능)
+    // 객체 사이의 연관관계는 참조를 통해 찾아낸다.
+    @OneToMany(mappedBy = "post")
+    // toString 무한 반복 방지(stack overflow)
+    @ToString.Exclude
     private List<CommentEntity> comments = new ArrayList<>();
 
     public static PostEntity DtoToEntity(PostDTO postDTO){

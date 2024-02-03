@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -18,9 +19,10 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.*;
 
 
-@ActiveProfiles("dev")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@ActiveProfiles("dev")
+//@DataJpaTest
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest
 public class CommentRepositoryTest {
 
     private final CommentRepository commentRepository;
@@ -67,16 +69,12 @@ public class CommentRepositoryTest {
         commentRepository.save(comment1);
         commentRepository.save(comment2);
 
-        postRepository.deleteById(post1.getId());
         postRepository.flush();
 
-        CommentEntity c = this.commentRepository.findAllByPost(post1)
-                .orElseThrow(NullPointerException::new).get(0);
 
+        postRepository.deleteById(post1.getId());
 
+        postRepository.flush();
 
-        //then
-        System.out.println(c.getPost());
-        System.out.println(p);
     }
 }

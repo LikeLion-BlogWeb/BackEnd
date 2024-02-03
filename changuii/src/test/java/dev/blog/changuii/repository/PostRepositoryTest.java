@@ -96,8 +96,7 @@ public class PostRepositoryTest {
 
         //when
         PostEntity after = postRepository.save(post1);
-        comments = commentRepository.findAllByPost(post1)
-                .orElseThrow(NullPointerException::new);
+        comments = commentRepository.findAllByPost(post1);
 
 
         //then
