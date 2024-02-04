@@ -34,12 +34,17 @@ public class ExceptionAdvisor {
 
     // 모든 컨트롤러에대한 예외 핸들러
     @ExceptionHandler({
+            // 게시글이 존재하지 않을 때
             PostNotFoundException.class,
+            // 유저가 존재하지 않을 때
             UserNotFoundException.class,
+            // 회원가입시 이미 가입된 이메일일 때
             EmailDuplicationException.class,
+            // 비밀번호가 일치하지 않을 때
             PasswordInvalidException.class,
-            UserNotFoundException.class,
+            // 이메일값이 DTO에 존재하지 않을 때 -> Validation으로 막아야할듯
             EmailNullException.class,
+            // 댓글이 존재하지 않을 때
             CommentNotFoundException.class,
 
     })

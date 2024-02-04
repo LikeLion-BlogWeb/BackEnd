@@ -5,10 +5,7 @@ import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
 import dev.blog.changuii.entity.UserEntity;
-import dev.blog.changuii.exception.EmailDuplicationException;
-import dev.blog.changuii.exception.EmailNotExistException;
-import dev.blog.changuii.exception.EmailNullException;
-import dev.blog.changuii.exception.PasswordInvalidException;
+import dev.blog.changuii.exception.*;
 import dev.blog.changuii.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -154,7 +151,7 @@ public class AuthServiceTest {
         assertThatThrownBy(()->{
             this.authService.signin(user1);
         //then
-        }).isInstanceOf(EmailNotExistException.class);
+        }).isInstanceOf(UserNotFoundException.class);
         verify(this.userDAO).existByEmail(user1.getEmail());
     }
 
