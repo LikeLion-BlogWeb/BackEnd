@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -24,8 +25,8 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public UserEntity readUser(String email) {
-        return this.userRepository.findByEmail(email).get();
+    public Optional<UserEntity> readUser(String email) {
+        return this.userRepository.findByEmail(email);
     }
 
     @Override

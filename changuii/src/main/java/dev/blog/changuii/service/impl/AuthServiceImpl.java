@@ -5,10 +5,7 @@ import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
 import dev.blog.changuii.entity.UserEntity;
-import dev.blog.changuii.exception.EmailDuplicationException;
-import dev.blog.changuii.exception.EmailNotExistException;
-import dev.blog.changuii.exception.EmailNullException;
-import dev.blog.changuii.exception.PasswordInvalidException;
+import dev.blog.changuii.exception.*;
 import dev.blog.changuii.repository.UserRepository;
 import dev.blog.changuii.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
         // Email Exists check
         else{
             if(!this.userDAO.existByEmail(email))
-                throw new EmailNotExistException();
+                throw new UserNotFoundException();
         }
 
     }
@@ -75,7 +72,8 @@ public class AuthServiceImpl implements AuthService {
         this.checkEmail(userDTO.getEmail(), false);
 
         try {
-            UserEntity user = this.userDAO.readUser(userDTO.getEmail());
+            UserEntity user = this.userDAO.readUser(userDTO.getEmail())
+                    .orElseThrow(UserNotFoundException::new);
             if (!this.passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
                 throw new PasswordInvalidException();
             }

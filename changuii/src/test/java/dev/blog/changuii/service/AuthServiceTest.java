@@ -26,6 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
@@ -124,7 +125,7 @@ public class AuthServiceTest {
         String token = "ABCDEFG";
 
         when(this.userDAO.existByEmail(user1.getEmail())).thenReturn(true);
-        when(this.userDAO.readUser(userEntity.getEmail())).thenReturn(userEntity);
+        when(this.userDAO.readUser(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
         when(this.passwordEncoder.matches(user1.getPassword(), userEntity.getPassword())).thenReturn(true);
         when(this.jwtProvider.createToken(userEntity.getEmail(), userEntity.getRoles())).thenReturn(token);
 
@@ -166,7 +167,7 @@ public class AuthServiceTest {
         user1.setPassword("123");
 
         when(this.userDAO.existByEmail(user1.getEmail())).thenReturn(true);
-        when(this.userDAO.readUser(user1.getEmail())).thenReturn(userEntity);
+        when(this.userDAO.readUser(user1.getEmail())).thenReturn(Optional.of(userEntity));
         when(this.passwordEncoder.matches(user1.getPassword(), userEntity.getPassword())).thenReturn(false);
 
         assertThatThrownBy(()->{

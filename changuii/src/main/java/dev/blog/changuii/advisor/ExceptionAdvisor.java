@@ -1,6 +1,6 @@
 package dev.blog.changuii.advisor;
 
-import dev.blog.changuii.exception.PostNotFoundException;
+import dev.blog.changuii.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -32,8 +32,17 @@ public class ExceptionAdvisor {
     }
 
 
-    // PostController에서  PostService호출시 발생하는 예외에 대한 핸들링
-    @ExceptionHandler({PostNotFoundException.class})
+    // 모든 컨트롤러에대한 예외 핸들러
+    @ExceptionHandler({
+            PostNotFoundException.class,
+            UserNotFoundException.class,
+            EmailDuplicationException.class,
+            PasswordInvalidException.class,
+            UserNotFoundException.class,
+            EmailNullException.class,
+            CommentNotFoundException.class,
+
+    })
     public ResponseEntity<String> postControllerExceptionHandler(
             Exception e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -41,13 +50,6 @@ public class ExceptionAdvisor {
     }
 
 
-    // AuthController에서 AuthService 호출 시 발생하는 예외에 대한 핸들링
-    @ExceptionHandler()
-    public ResponseEntity<String> authControllerExceptionHandler(
-            Exception e
-    ){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
 
 
 

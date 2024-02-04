@@ -40,7 +40,7 @@ public class PostDTO {
                 .id(postEntity.getId())
                 .title(postEntity.getTitle())
                 .content(postEntity.getContent())
-                .email(postEntity.getEmail())
+                .email(postEntity.getUser().getEmail())
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews()).build();

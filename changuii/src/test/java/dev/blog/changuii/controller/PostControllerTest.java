@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.entity.PostEntity;
+import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.PostNotFoundException;
 import dev.blog.changuii.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,7 +66,9 @@ public class PostControllerTest {
     @DisplayName("post create test")
     public void createPostTest() throws Exception {
         long id = 1L;
-        PostDTO after = PostDTO.entityToDTO(PostEntity.initEntity(post1));
+        PostDTO after = PostDTO
+                .entityToDTO(PostEntity
+                        .initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after.setId(id);
         //given
         given(postService.createPost(refEq(post1)))
@@ -92,7 +95,9 @@ public class PostControllerTest {
     @DisplayName("read post test")
     public void readPostTest() throws Exception {
         long id = 1L;
-        PostDTO after = PostDTO.entityToDTO(PostEntity.initEntity(post1));
+        PostDTO after = PostDTO
+                .entityToDTO(PostEntity
+                        .initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after.setId(id);
         //given
         given(postService.readPost(id))
@@ -144,11 +149,11 @@ public class PostControllerTest {
     @DisplayName("read all post test")
     public void readAllPostTest() throws Exception {
 
-        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1));
+        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after1.setId(1L);
-        PostDTO after2 = PostDTO.entityToDTO(PostEntity.initEntity(post2));
+        PostDTO after2 = PostDTO.entityToDTO(PostEntity.initEntity(post2, UserEntity.builder().email(post2.getEmail()).build()));
         after2.setId(2L);
-        PostDTO after3 = PostDTO.entityToDTO(PostEntity.initEntity(post3));
+        PostDTO after3 = PostDTO.entityToDTO(PostEntity.initEntity(post3, UserEntity.builder().email(post3.getEmail()).build()));
         after3.setId(3L);
         List<PostDTO> postDTOList = Arrays.asList(after1, after2, after3);
 
@@ -204,7 +209,7 @@ public class PostControllerTest {
     @Test
     @DisplayName("update post test")
     public void updatePostTest() throws Exception {
-        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1));
+        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after1.setId(1L);
 
         //given
@@ -232,7 +237,7 @@ public class PostControllerTest {
     @Test
     @DisplayName("not found post update test")
     public void notFoundPostUpdateTest() throws Exception {
-        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1));
+        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after1.setId(1L);
         Throwable e = new PostNotFoundException();
 

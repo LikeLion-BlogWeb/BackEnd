@@ -1,9 +1,12 @@
 package dev.blog.changuii.service.impl;
 
 import dev.blog.changuii.dao.PostDAO;
+import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.entity.PostEntity;
+import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.PostNotFoundException;
+import dev.blog.changuii.exception.UserNotFoundException;
 import dev.blog.changuii.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +24,27 @@ public class PostServiceImpl implements PostService {
 
     private final static Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PostDAO postDAO;
+    private final UserDAO userDAO;
 
     public PostServiceImpl(
-            @Autowired PostDAO postDAO
+            @Autowired PostDAO postDAO,
+            @Autowired UserDAO userDAO
     ){
+        this.userDAO = userDAO;
         this.postDAO = postDAO;
+    }
+
+    private UserEntity findUser(String email){
+        UserEntity user = this.userDAO.readUser(email)
+                .orElseThrow(UserNotFoundException::new);
+
+        return user;
     }
 
     @Override
     public PostDTO createPost(PostDTO postDTO) {
-        PostEntity postEntity = PostEntity.initEntity(postDTO);
+        PostEntity postEntity = PostEntity
+                .initEntity(postDTO, this.findUser(postDTO.getEmail()));
 
         postEntity = this.postDAO.createPost(postEntity);
 

@@ -1,6 +1,7 @@
 package dev.blog.changuii.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.blog.changuii.advisor.ExceptionAdvisor;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AuthController.class)
+@WebMvcTest({AuthController.class})
 public class AuthControllerTest {
 
     // http를 테스트하기 위한 객체
@@ -36,6 +37,7 @@ public class AuthControllerTest {
     // filter 의존성 주입
     @MockBean
     private JwtProvider jwtProvider;
+
 
     private UserDTO user1;
     private UserDTO user2;

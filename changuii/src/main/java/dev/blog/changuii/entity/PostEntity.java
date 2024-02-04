@@ -29,8 +29,8 @@ public class PostEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
-    private UserEntity userEntity;
+    @JoinColumn(name = "user_email")
+    private UserEntity user;
 
     @Column
     private LocalDateTime writeDate;
@@ -58,20 +58,21 @@ public class PostEntity {
     @ToString.Exclude
     private List<CommentEntity> comments = new ArrayList<>();
 
-    public static PostEntity DtoToEntity(PostDTO postDTO){
+
+    public static PostEntity DtoToEntity(PostDTO postDTO, UserEntity user){
         return PostEntity.builder()
                 .content(postDTO.getContent())
-                .email(postDTO.getEmail())
+                .user(user)
                 .title(postDTO.getTitle())
                 .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
                 .likes(postDTO.getLike())
                 .views(postDTO.getViews()).build();
     }
 
-    public static PostEntity initEntity(PostDTO postDTO){
+    public static PostEntity initEntity(PostDTO postDTO, UserEntity user){
         return PostEntity.builder()
                 .content(postDTO.getContent())
-                .email(postDTO.getEmail())
+                .user(user)
                 .title(postDTO.getTitle())
                 .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
                 .likes(new ArrayList<>())
@@ -86,7 +87,7 @@ public class PostEntity {
                 .views(postEntity.getViews())
                 .likes(postEntity.getLikes())
                 .writeDate(postEntity.getWriteDate())
-                .email(postEntity.getEmail())
+                .user(postEntity.getUser())
 
                 // 변경되는 값
                 .content(postDTO.getContent())

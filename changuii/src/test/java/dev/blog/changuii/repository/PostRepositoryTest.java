@@ -3,6 +3,7 @@ package dev.blog.changuii.repository;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
+import dev.blog.changuii.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,11 +41,13 @@ public class PostRepositoryTest {
     @BeforeEach
     public void init(){
         post1 = PostEntity.builder()
-                .title("게시글입니다.").content("테스트용").email("asd123@naver.com")
+                .title("게시글입니다.").content("테스트용")
+                .userEntity(UserEntity.builder().email("asd123@naver.com").build())
                 .writeDate(LocalDateTime.parse("2024-02-01T13:43:23")).likes(new ArrayList<>()).views(0L)
                 .comments(new ArrayList<>()).build();
         post2 = PostEntity.builder()
-                .title("게시글입니다람쥐").content("테스트용용").email("abcdef@naver.com")
+                .title("게시글입니다람쥐").content("테스트용용")
+                .userEntity(UserEntity.builder().email("abcdef@naver.com").build())
                 .writeDate(LocalDateTime.parse("2024-02-03T21:20:23")).likes(new ArrayList<>()).views(0L)
                 .comments(new ArrayList<>()).build();
     }
@@ -70,7 +73,7 @@ public class PostRepositoryTest {
         List<CommentEntity> comments = post1.getComments();
         CommentEntity comment = CommentEntity.builder()
                         .post(post1).writeDate(post1.getWriteDate())
-                        .email(post1.getEmail()).content("asdasd").build();
+                        .user(post1.getUserEntity()).content("asdasd").build();
         comments.add(comment);
         post1.setComments(comments);
 
@@ -90,7 +93,7 @@ public class PostRepositoryTest {
         List<CommentEntity> comments = post1.getComments();
         CommentEntity comment = CommentEntity.builder()
                 .post(post1).writeDate(post1.getWriteDate())
-                .email(post1.getEmail()).content("asdasd").build();
+                .user(post1.getUserEntity()).content("asdasd").build();
         comments.add(comment);
         post1.setComments(comments);
 
