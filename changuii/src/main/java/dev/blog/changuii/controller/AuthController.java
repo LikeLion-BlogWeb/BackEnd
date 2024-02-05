@@ -5,6 +5,7 @@ import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
 import dev.blog.changuii.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,14 +31,18 @@ public class AuthController {
     public ResponseEntity<UserDTO> signup(
             @Valid @RequestBody UserDTO userDTO
     ){
-        return ResponseEntity.status(201).body(this.authService.signup(userDTO));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(this.authService.signup(userDTO));
     }
 
     @PostMapping("/signin")
     public ResponseEntity<TokenDTO> signin(
             @Valid @RequestBody UserDTO userDTO
     ){
-        return ResponseEntity.status(200).body(this.authService.signin(userDTO));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.authService.signin(userDTO));
     }
 
 }

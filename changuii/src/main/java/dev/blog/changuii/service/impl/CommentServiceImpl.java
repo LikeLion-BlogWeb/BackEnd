@@ -35,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
         this.commentDAO = commentDAO;
     }
 
+
     private UserEntity findUser(String email){
         return this.userDAO.readUser(email)
                 .orElseThrow(UserNotFoundException::new);
@@ -47,7 +48,8 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public CommentDTO createComment(CommentDTO commentDTO) {
+    public CommentDTO createComment(CommentDTO commentDTO)
+            throws UserNotFoundException, PostNotFoundException{
         CommentEntity comment = CommentEntity.DtoToEntity(
                 commentDTO,
                 findUser(commentDTO.getEmail()),
@@ -60,7 +62,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO readComment(Long id) {
+    public CommentDTO readComment(Long id)
+            throws CommentNotFoundException {
         return CommentDTO.EntityToDTO(
                 this.commentDAO.readComment(id)
                 .orElseThrow(CommentNotFoundException::new));
@@ -73,7 +76,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> readAllByPostComment(Long postId) {
+    public List<CommentDTO> readAllByPostComment(Long postId)
+            throws PostNotFoundException{
         PostEntity post = findPost(postId);
 
         return CommentDTO.EntityListToDTOList(
@@ -82,7 +86,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO updateComment(CommentDTO commentDTO) {
+    public CommentDTO updateComment(CommentDTO commentDTO)
+            throws CommentNotFoundException {
         CommentEntity before = this.commentDAO.readComment(commentDTO.getId())
                 .orElseThrow(CommentNotFoundException::new);
 
@@ -95,7 +100,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id)
+            throws CommentNotFoundException{
         if(!this.commentDAO.deleteComment(id))
             throw new CommentNotFoundException();
     }

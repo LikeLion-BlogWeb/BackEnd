@@ -34,7 +34,7 @@ public class PostServiceImpl implements PostService {
         this.postDAO = postDAO;
     }
 
-    private UserEntity findUser(String email){
+    private UserEntity findUser(String email) throws UserNotFoundException{
         UserEntity user = this.userDAO.readUser(email)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -42,7 +42,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO createPost(PostDTO postDTO) {
+    public PostDTO createPost(PostDTO postDTO) throws UserNotFoundException{
+
         PostEntity postEntity = PostEntity
                 .initEntity(postDTO, this.findUser(postDTO.getEmail()));
 

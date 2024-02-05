@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
         this.userDAO = userDAO;
     }
 
-    private void checkEmail(String email, boolean flag){
+    private void checkEmail(String email, boolean flag) throws EmailDuplicationException, UserNotFoundException{
         // Duplication check
         if(flag){
             if(this.userDAO.existByEmail(email))
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenDTO signin(UserDTO userDTO) {
+    public TokenDTO signin(UserDTO userDTO) throws UserNotFoundException, EmailNullException{
 
         this.checkEmail(userDTO.getEmail(), false);
 
