@@ -194,7 +194,8 @@ public class PostControllerTest {
         // 이 방식을 사용할때 서블릿 설정으로 utf-8을 설정해야 응답의 한글값이 깨지지 않는다.
         ObjectMapper mapper = new ObjectMapper();
         List<PostDTO> after = mapper.readValue(
-                result.getResponse().getContentAsString(), new TypeReference<List<PostDTO>>() {});
+                result.getResponse().getContentAsString()
+                , new TypeReference<List<PostDTO>>() {});
 
         //then
         verify(postService).readAllPost();
