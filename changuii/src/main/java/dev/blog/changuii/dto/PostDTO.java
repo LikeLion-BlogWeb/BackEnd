@@ -1,10 +1,7 @@
 package dev.blog.changuii.dto;
-
-
 import dev.blog.changuii.entity.PostEntity;
 import lombok.*;
 import org.hibernate.validator.constraints.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +31,8 @@ public class PostDTO {
 
     private Long views;
 
+    private String category;
+
 
     public static PostDTO entityToDTO(PostEntity postEntity){
         return PostDTO.builder()
@@ -43,7 +42,8 @@ public class PostDTO {
                 .email(postEntity.getUser().getEmail())
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
-                .views(postEntity.getViews()).build();
+                .views(postEntity.getViews())
+                .category(postEntity.getCategory()).build();
     }
     public static List<PostDTO> entityListToDTOList(List<PostEntity> postEntityList){
         List<PostDTO> postDTOList = new ArrayList<>();
