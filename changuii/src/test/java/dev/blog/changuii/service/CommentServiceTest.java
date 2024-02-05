@@ -19,6 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -120,6 +122,105 @@ public class CommentServiceTest {
         verify(this.commentDAO).readComment(id);
 
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
+    }
+
+    @Test
+    @DisplayName("댓글 전체 조회")
+    public void readAllCommentTest(){
+
+        List<CommentEntity> comments = Arrays.asList(
+                        CommentEntity.DtoToEntity(comment1, user1, post1),
+                        CommentEntity.DtoToEntity(comment2, user2, post1));
+        List<CommentDTO> before = CommentDTO.EntityListToDTOList(comments);
+
+        //given
+        when(this.commentDAO.readAllComment())
+                .thenReturn(comments);
+
+        //when
+        List<CommentDTO> after = this.commentService.readAllComment();
+
+
+        //then
+        verify(this.commentDAO).readAllComment();
+
+        assertThat(after).usingRecursiveComparison().isEqualTo(before);
+
+
+    }
+
+    @Test
+    @DisplayName("게시글 기반 댓글 전체 조회")
+    public void readAllByPostCommentTest(){
+        List<CommentEntity> comments = Arrays.asList(
+                CommentEntity.DtoToEntity(comment1, user1, post1),
+                CommentEntity.DtoToEntity(comment2, user2, post1));
+        List<CommentDTO> before = CommentDTO.EntityListToDTOList(comments);
+
+        //given
+        when(this.postDAO.readPost(comment1.getPostId()))
+                .thenReturn(Optional.of(post1));
+        when(this.commentDAO.readAllByPostComment(refEq(post1)))
+                .thenReturn(comments);
+
+        //when
+        List<CommentDTO> after = this.commentService.readAllByPostComment(comment1.getPostId());
+
+
+        //then
+        verify(this.postDAO).readPost(comment1.getPostId());
+        verify(this.commentDAO).readAllByPostComment(post1);
+
+        assertThat(after).usingRecursiveComparison().isEqualTo(before);
+    }
+
+
+    @Test
+    @DisplayName("댓글 수정")
+    public void updateCommentTest(){
+        comment1.setId(1L);
+
+        CommentEntity commentEntity = CommentEntity
+                .DtoToEntity(comment1, user1, post1);
+        comment1.setContent("수정된 댓글입니다.");
+        CommentEntity updateComment = CommentEntity
+                .DtoToEntity(comment1, user1, post1);
+        CommentDTO before = CommentDTO.EntityToDTO(updateComment);
+
+        //given
+        when(this.commentDAO.readComment(comment1.getId()))
+                .thenReturn(Optional.of(commentEntity));
+        when(this.commentDAO.createComment(refEq(updateComment)))
+                .thenReturn(updateComment);
+
+        //when
+        CommentDTO after = this.commentService.updateComment(comment1);
+
+
+
+        //then
+        verify(this.commentDAO).readComment(comment1.getPostId());
+        verify(this.commentDAO).createComment(refEq(updateComment));
+
+        assertThat(after).usingRecursiveComparison().isEqualTo(before);
+    }
+
+
+    @Test
+    @DisplayName("댓글 삭제")
+    public void deleteCommentTest(){
+        long id = 1L;
+
+        //given
+        when(commentDAO.deleteComment(id))
+                .thenReturn(true);
+
+        //when
+        this.commentService.deleteComment(id);
+
+        //then
+        verify(this.commentDAO).deleteComment(id);
+
     }
 
 
