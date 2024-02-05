@@ -48,16 +48,16 @@ public class CommentEntity {
     }
 
 
-    public static CommentEntity updateComment(CommentEntity before, CommentEntity after){
+    public static CommentEntity updateComment(CommentEntity origin, CommentDTO updateValue){
         return CommentEntity.builder()
                 // 수정 불가능
-                .id(before.getId())
-                .post(before.getPost())
-                .user(before.getUser())
-                .writeDate(before.getWriteDate())
+                .id(origin.getId())
+                .post(origin.getPost())
+                .user(origin.getUser())
+                .writeDate(origin.getWriteDate())
 
                 // 수정 가능
-                .content(after.getContent())
+                .content(updateValue.getContent())
                 .build();
     }
 

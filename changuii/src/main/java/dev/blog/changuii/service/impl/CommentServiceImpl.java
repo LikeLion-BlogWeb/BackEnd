@@ -4,7 +4,6 @@ import dev.blog.changuii.dao.CommentDAO;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.CommentDTO;
-import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
@@ -88,12 +87,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDTO updateComment(CommentDTO commentDTO)
             throws CommentNotFoundException {
-        CommentEntity before = this.commentDAO.readComment(commentDTO.getId())
+        CommentEntity origin = this.commentDAO.readComment(commentDTO.getId())
                 .orElseThrow(CommentNotFoundException::new);
 
         // Content만 수정 가능
-        CommentEntity after = CommentEntity.updateComment(before,
-                CommentEntity.DtoToEntity(commentDTO, new UserEntity(), new PostEntity()));
+        CommentEntity after = CommentEntity.updateComment(
+                origin, commentDTO);
         after = this.commentDAO.createComment(after);
 
         return CommentDTO.EntityToDTO(after);
