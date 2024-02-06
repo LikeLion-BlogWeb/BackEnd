@@ -2,6 +2,7 @@ package dev.blog.changuii.service.impl;
 
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
+import dev.blog.changuii.dto.CommentDTO;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
@@ -58,7 +59,11 @@ public class PostServiceImpl implements PostService {
 
         PostEntity postEntity = post.orElseThrow(PostNotFoundException::new);
 
-        return PostDTO.entityToDTO(postEntity);
+        // 특정 게시글의 댓글도 같이 조회
+        PostDTO target = PostDTO.entityToDTO(postEntity);
+        target.setComments(CommentDTO.EntityListToDTOList(postEntity.getComments()));
+
+        return target;
     }
 
     @Override

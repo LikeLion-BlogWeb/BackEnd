@@ -33,6 +33,8 @@ public class PostDTO {
 
     private String category;
 
+    private List<CommentDTO> comments = new ArrayList<>();
+
 
     public static PostDTO entityToDTO(PostEntity postEntity){
         return PostDTO.builder()
