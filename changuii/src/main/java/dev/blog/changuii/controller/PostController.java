@@ -49,9 +49,10 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(this.postService.readAllPost());
     }
 
+    // todo validation 어떻게 할지 고민해봐야함.
     @PutMapping
     public ResponseEntity<PostDTO> updatePost(
-            @Valid @RequestBody PostDTO postDTO
+            @RequestBody PostDTO postDTO
     ){
         return ResponseEntity.status(HttpStatus.OK).body(this.postService.updatePost(postDTO));
     }

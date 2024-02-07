@@ -28,7 +28,7 @@ public class CommentController {
 
     @PostMapping()
     public ResponseEntity<CommentDTO> createComment(
-            @RequestBody CommentDTO commentDTO
+            @Valid @RequestBody CommentDTO commentDTO
             ){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -60,7 +60,7 @@ public class CommentController {
                 .body(this.commentService.readAllByPostComment(postId));
     }
 
-
+    // todo Validation 어떻게 할지 생각해봐야함
     @PutMapping("/{id}")
     public ResponseEntity<CommentDTO> updateComment(
             @PathVariable("id") @NotNull Long id,

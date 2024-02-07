@@ -59,6 +59,8 @@ public class PostEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     // toString 무한 반복 방지(stack overflow)
     @ToString.Exclude
+    // Builder 적용 시 초기화가 안된다. Default 어노테이션으로 초기화해주어야 함.
+    @Builder.Default
     private List<CommentEntity> comments = new ArrayList<>();
 
 
