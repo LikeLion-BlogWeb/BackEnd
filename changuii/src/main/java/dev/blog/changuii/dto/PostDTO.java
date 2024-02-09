@@ -41,6 +41,7 @@ public class PostDTO {
 
     private String category;
 
+    // 단일 게시글 조회시 댓글 정보도 같이 반환
     @Builder.Default
     private List<CommentDTO> comments = new ArrayList<>();
 
