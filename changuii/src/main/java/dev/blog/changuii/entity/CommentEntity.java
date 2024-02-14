@@ -5,6 +5,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 @Getter
@@ -59,6 +62,22 @@ public class CommentEntity {
                 // 수정 가능
                 .content(updateValue.getContent())
                 .build();
+    }
+
+    public static List<CommentEntity> descByWriteDateComment(List<CommentEntity> comments){
+        Collections.sort(comments, new Comparator<CommentEntity>() {
+            @Override
+            public int compare(CommentEntity o1, CommentEntity o2) {
+                if(o1.writeDate.isBefore(o2.writeDate)){
+                    return -1;
+                }else{
+                    return 1;
+                }
+            }
+        });
+        return comments;
+
+
     }
 
 

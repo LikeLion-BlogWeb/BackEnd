@@ -39,6 +39,11 @@ public class PostDAOImpl implements PostDAO {
     }
 
     @Override
+    public List<PostEntity> readAllOrderByWriteDatePost() {
+        return this.postRepository.findAllByOrderByWriteDateDesc();
+    }
+
+    @Override
     public void deletePost(Long id) {
         this.postRepository.deleteById(id);
     }

@@ -35,7 +35,7 @@ public class CommentDTO {
     @Email
     private String email;
 
-    @NotBlank(message = "댓글이 작성될 게시글 ID는 필수 값입니다.")
+    // NotBlank는 String에만 가능
     @NotNull(message = "댓글이 작성될 게시글 ID는 필수 값입니다.")
     private Long postId;
 
