@@ -120,12 +120,11 @@ public class PostServiceTest {
 
 
         //given
-        when(postDAO.readAllPost())
+        when(postDAO.readAllOrderByWriteDatePost())
                 .thenReturn(postEntityList);
 
         //when
         List<PostDTO> after = this.postService.readAllPost();
-
 
         //then
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
