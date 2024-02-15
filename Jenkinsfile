@@ -3,8 +3,10 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh './changuii/gradlew clean build'
+                sh 'cd changuii'
+                sh './gradlew clean build'
                 sh 'ls'
+                sh 'cd ..'
             }
         }
         stage('doker build'){
