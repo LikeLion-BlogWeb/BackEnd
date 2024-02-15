@@ -7,6 +7,11 @@ pipeline {
                 sh 'ls'
             }
         }
+        stage('key mv'){
+            steps{
+                sh 'sudo cp keystore.p12 /changuii/src/main/resources/keystore.p12'
+            }
+        }
         stage('doker build'){
             steps{
                 sh 'sudo docker build -t changuii/blog:latest .'
