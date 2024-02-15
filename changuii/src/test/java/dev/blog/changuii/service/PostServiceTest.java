@@ -129,7 +129,7 @@ public class PostServiceTest {
         //then
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
 
-        verify(postDAO).readAllPost();
+        verify(postDAO).readAllOrderByWriteDatePost();
     }
 
 
