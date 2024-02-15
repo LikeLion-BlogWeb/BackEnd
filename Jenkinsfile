@@ -9,7 +9,7 @@ pipeline {
         }
         stage('key mv'){
             steps{
-                sh 'sudo cp keystore.p12 /changuii/src/main/resources/keystore.p12'
+                sh 'sudo cp keystore.p12 changuii/src/main/resources/keystore.p12'
             }
         }
         stage('doker build'){
