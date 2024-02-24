@@ -14,10 +14,12 @@ public class TokenDTO {
 
     private String token;
     private String email;
+    private String name;
 
-    public static TokenDTO makeTokenDTO(String email, String token){
+    public static TokenDTO makeTokenDTO(UserEntity user, String token){
         return TokenDTO.builder()
-                .email(email)
+                .email(user.getEmail())
+                .name(user.getName())
                 .token(token)
                 .build();
     }

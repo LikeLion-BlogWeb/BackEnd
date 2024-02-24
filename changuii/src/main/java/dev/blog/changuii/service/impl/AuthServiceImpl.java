@@ -78,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new PasswordInvalidException();
             }
 
-            return TokenDTO.makeTokenDTO(user.getEmail(), "Bearer " + this.jwtProvider.createToken(user.getEmail(), user.getRoles()));
+            return TokenDTO.makeTokenDTO(user, "Bearer " + this.jwtProvider.createToken(user.getEmail(), user.getRoles()));
         }catch (NullPointerException e){
             e.printStackTrace();
             throw new EmailNullException();

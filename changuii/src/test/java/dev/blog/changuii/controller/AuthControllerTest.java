@@ -5,6 +5,7 @@ import dev.blog.changuii.advisor.ExceptionAdvisor;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.TokenDTO;
 import dev.blog.changuii.dto.UserDTO;
+import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.EmailDuplicationException;
 import dev.blog.changuii.exception.EmailNullException;
 import dev.blog.changuii.exception.PasswordInvalidException;
@@ -131,7 +132,7 @@ public class AuthControllerTest {
         String token = "Bearer ";
         // given
         given(authService.signin(refEq(user1)))
-                .willReturn(TokenDTO.makeTokenDTO(user1.getEmail(), token));
+                .willReturn(TokenDTO.makeTokenDTO(UserEntity.initUserEntity(user1), token));
 
         //when
         mockMvc.perform(
@@ -176,9 +177,9 @@ public class AuthControllerTest {
 
     @BeforeEach
     public void init(){
-        user1 = new UserDTO("asd123@naver.com", "12345678");
-        user2 = new UserDTO("abcdefg@naver.com", "87654321");
-        user3 = new UserDTO("abc123@daum.net", "24682468");
+        user1 = new UserDTO("asd123@naver.com", "12345678", "창의");
+        user2 = new UserDTO("abcdefg@naver.com", "87654321", "시영");
+        user3 = new UserDTO("abc123@daum.net", "24682468", "현민");
 
     }
 

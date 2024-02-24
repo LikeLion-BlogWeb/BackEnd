@@ -38,6 +38,9 @@ public class UserEntity implements UserDetails {
     private String password;
 
     @Column
+    private String name;
+
+    @Column
     @ElementCollection
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -90,6 +93,7 @@ public class UserEntity implements UserDetails {
         return UserEntity.builder()
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
+                .name(userDTO.getName())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
     }

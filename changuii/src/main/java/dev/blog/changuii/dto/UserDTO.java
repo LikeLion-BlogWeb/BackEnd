@@ -22,4 +22,8 @@ public class UserDTO {
     @NotBlank(message = "password 값이 없습니다.")
     @Size(min = 8, message = "password는 최소 8자리가 만족되어야 합니다.")
     private String password;
+
+    @NotNull(message = "이름이 없습니다.")
+    private String name;
+
 }
