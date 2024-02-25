@@ -4,6 +4,7 @@ import dev.blog.changuii.dao.CommentDAO;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.CommentDTO;
+import dev.blog.changuii.dto.response.ResponseCommentDTO;
 import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
@@ -47,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public CommentDTO createComment(CommentDTO commentDTO)
+    public ResponseCommentDTO createComment(CommentDTO commentDTO)
             throws UserNotFoundException, PostNotFoundException{
         CommentEntity comment = CommentDTO.toEntity(
                 commentDTO,
@@ -57,35 +58,35 @@ public class CommentServiceImpl implements CommentService {
 
         comment = this.commentDAO.createComment(comment);
 
-        return CommentEntity.toDTO(comment);
+        return CommentEntity.toResponseCommentDTO(comment);
     }
 
     @Override
-    public CommentDTO readComment(Long id)
+    public ResponseCommentDTO readComment(Long id)
             throws CommentNotFoundException {
-        return CommentEntity.toDTO(
+        return CommentEntity.toResponseCommentDTO(
                 this.commentDAO.readComment(id)
                 .orElseThrow(CommentNotFoundException::new));
     }
 
     @Override
-    public List<CommentDTO> readAllComment() {
-        return CommentEntity.toDTOs(
+    public List<ResponseCommentDTO> readAllComment() {
+        return CommentEntity.toResponseCommentDTOs(
                 this.commentDAO.readAllComment());
     }
 
     @Override
-    public List<CommentDTO> readAllByPostComment(Long postId)
+    public List<ResponseCommentDTO> readAllByPostComment(Long postId)
             throws PostNotFoundException{
         PostEntity post = findPost(postId);
 
-        return CommentEntity.toDTOs(
+        return CommentEntity.toResponseCommentDTOs(
                 this.commentDAO.readAllByPostComment(post)
         );
     }
 
     @Override
-    public CommentDTO updateComment(CommentDTO commentDTO)
+    public ResponseCommentDTO updateComment(CommentDTO commentDTO)
             throws CommentNotFoundException {
         CommentEntity origin = this.commentDAO.readComment(commentDTO.getId())
                 .orElseThrow(CommentNotFoundException::new);
@@ -95,7 +96,7 @@ public class CommentServiceImpl implements CommentService {
                 origin, commentDTO);
         after = this.commentDAO.createComment(after);
 
-        return CommentEntity.toDTO(after);
+        return CommentEntity.toResponseCommentDTO(after);
     }
 
     @Override

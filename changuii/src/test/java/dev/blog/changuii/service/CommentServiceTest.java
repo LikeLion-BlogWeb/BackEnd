@@ -5,6 +5,7 @@ import dev.blog.changuii.dao.CommentDAO;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.CommentDTO;
+import dev.blog.changuii.dto.response.ResponseCommentDTO;
 import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
@@ -77,7 +78,7 @@ public class CommentServiceTest {
         long id = 1L;
         comment1.setId(id);
         CommentEntity comment = CommentDTO.toEntity(comment1, user1, post1);
-        CommentDTO before = CommentEntity.toDTO(comment);
+        ResponseCommentDTO before = CommentEntity.toResponseCommentDTO(comment);
 
         //given
         when(this.commentDAO.createComment(refEq(comment)))
@@ -88,7 +89,7 @@ public class CommentServiceTest {
                 .thenReturn(Optional.of(post1));
 
         //when
-        CommentDTO after =
+        ResponseCommentDTO after =
                 this.commentService.createComment(comment1);
 
 
@@ -106,14 +107,14 @@ public class CommentServiceTest {
         long id = 1L;
         comment1.setId(id);
         CommentEntity comment = CommentDTO.toEntity(comment1, user1, post1);
-        CommentDTO before = CommentEntity.toDTO(comment);
+        ResponseCommentDTO before = CommentEntity.toResponseCommentDTO(comment);
 
         //given
         when(this.commentDAO.readComment(id))
                 .thenReturn(Optional.of(comment));
 
         //when
-        CommentDTO after = this.commentService.readComment(id);
+        ResponseCommentDTO after = this.commentService.readComment(id);
 
 
         //then
@@ -129,14 +130,14 @@ public class CommentServiceTest {
         List<CommentEntity> comments = Arrays.asList(
                         CommentDTO.toEntity(comment1, user1, post1),
                         CommentDTO.toEntity(comment2, user2, post1));
-        List<CommentDTO> before = CommentEntity.toDTOs(comments);
+        List<ResponseCommentDTO> before = CommentEntity.toResponseCommentDTOs(comments);
 
         //given
         when(this.commentDAO.readAllComment())
                 .thenReturn(comments);
 
         //when
-        List<CommentDTO> after = this.commentService.readAllComment();
+        List<ResponseCommentDTO> after = this.commentService.readAllComment();
 
 
         //then
@@ -153,7 +154,7 @@ public class CommentServiceTest {
         List<CommentEntity> comments = Arrays.asList(
                 CommentDTO.toEntity(comment1, user1, post1),
                 CommentDTO.toEntity(comment2, user2, post1));
-        List<CommentDTO> before = CommentEntity.toDTOs(comments);
+        List<ResponseCommentDTO> before = CommentEntity.toResponseCommentDTOs(comments);
 
         //given
         when(this.postDAO.readPost(comment1.getPostId()))
@@ -162,7 +163,7 @@ public class CommentServiceTest {
                 .thenReturn(comments);
 
         //when
-        List<CommentDTO> after = this.commentService.readAllByPostComment(comment1.getPostId());
+        List<ResponseCommentDTO> after = this.commentService.readAllByPostComment(comment1.getPostId());
 
 
         //then
@@ -181,7 +182,7 @@ public class CommentServiceTest {
         CommentEntity commentEntity = CommentDTO.toEntity(comment1, user1, post1);
         comment1.setContent("수정된 댓글입니다.");
         CommentEntity updateComment = CommentDTO.toEntity(comment1, user1, post1);
-        CommentDTO before = CommentEntity.toDTO(updateComment);
+        ResponseCommentDTO before = CommentEntity.toResponseCommentDTO(updateComment);
 
         //given
         when(this.commentDAO.readComment(comment1.getId()))
@@ -190,7 +191,7 @@ public class CommentServiceTest {
                 .thenReturn(updateComment);
 
         //when
-        CommentDTO after = this.commentService.updateComment(comment1);
+        ResponseCommentDTO after = this.commentService.updateComment(comment1);
 
 
 

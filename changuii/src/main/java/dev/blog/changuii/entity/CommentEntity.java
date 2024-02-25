@@ -1,6 +1,7 @@
 package dev.blog.changuii.entity;
 
 import dev.blog.changuii.dto.CommentDTO;
+import dev.blog.changuii.dto.response.ResponseCommentDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -55,6 +56,21 @@ public class CommentEntity {
         List<CommentDTO> commentDTOList = new ArrayList<>();
         comments.forEach(entity -> commentDTOList.add(toDTO(entity)) );
         return commentDTOList;
+    }
+
+    public static ResponseCommentDTO toResponseCommentDTO(CommentEntity comment){
+        return ResponseCommentDTO.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .writeDate(comment.getWriteDate().toString())
+                .postId(comment.getPost().getId())
+                .user(UserEntity.toDTO(comment.getUser())).build();
+    }
+
+    public static List<ResponseCommentDTO> toResponseCommentDTOs(List<CommentEntity> comments){
+        List<ResponseCommentDTO> DTOs = new ArrayList<>();
+        comments.forEach(entity -> DTOs.add(toResponseCommentDTO(entity)));
+        return DTOs;
     }
 
 

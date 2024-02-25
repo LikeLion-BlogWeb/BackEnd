@@ -2,9 +2,8 @@ package dev.blog.changuii.service.impl;
 
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
-import dev.blog.changuii.dto.CommentDTO;
 import dev.blog.changuii.dto.PostDTO;
-import dev.blog.changuii.dto.ResponsePostDTO;
+import dev.blog.changuii.dto.response.ResponsePostDTO;
 import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
@@ -14,11 +13,8 @@ import dev.blog.changuii.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +60,7 @@ public class PostServiceImpl implements PostService {
         // 특정 게시글의 댓글도 같이 조회
 
         ResponsePostDTO target = PostEntity.toResponseDTO(postEntity);
-        target.setComments(CommentEntity.toDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())));
+        target.setComments(CommentEntity.toResponseCommentDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())));
 
         return target;
     }

@@ -2,6 +2,7 @@ package dev.blog.changuii.controller;
 
 
 import dev.blog.changuii.dto.CommentDTO;
+import dev.blog.changuii.dto.response.ResponseCommentDTO;
 import dev.blog.changuii.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class CommentController {
 
 
     @PostMapping()
-    public ResponseEntity<CommentDTO> createComment(
+    public ResponseEntity<ResponseCommentDTO> createComment(
             @Valid @RequestBody CommentDTO commentDTO
             ){
         return ResponseEntity
@@ -36,7 +37,7 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommentDTO> readComment(
+    public ResponseEntity<ResponseCommentDTO> readComment(
             @PathVariable("id") Long id
     ){
       return ResponseEntity
@@ -45,14 +46,14 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentDTO>> readAllComment(){
+    public ResponseEntity<List<ResponseCommentDTO>> readAllComment(){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.commentService.readAllComment());
     }
 
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<CommentDTO>> readAllByPostComment(
+    public ResponseEntity<List<ResponseCommentDTO>> readAllByPostComment(
             @PathVariable("postId") Long postId
     ){
         return ResponseEntity
@@ -62,7 +63,7 @@ public class CommentController {
 
     // todo Validation 어떻게 할지 생각해봐야함
     @PutMapping("/{id}")
-    public ResponseEntity<CommentDTO> updateComment(
+    public ResponseEntity<ResponseCommentDTO> updateComment(
             @PathVariable("id") @NotNull Long id,
             @RequestBody CommentDTO commentDTO
     ){

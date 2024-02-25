@@ -1,8 +1,7 @@
 package dev.blog.changuii.entity;
 
-import dev.blog.changuii.dto.CommentDTO;
 import dev.blog.changuii.dto.PostDTO;
-import dev.blog.changuii.dto.ResponsePostDTO;
+import dev.blog.changuii.dto.response.ResponsePostDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -87,7 +86,7 @@ public class PostEntity {
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews())
-                .comments(CommentEntity.toDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .comments(CommentEntity.toResponseCommentDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())))
                 .user(UserEntity.toDTO(postEntity.getUser())).build();
     }
 

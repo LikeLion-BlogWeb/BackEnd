@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.PostDTO;
-import dev.blog.changuii.dto.ResponsePostDTO;
+import dev.blog.changuii.dto.response.ResponsePostDTO;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.PostNotFoundException;

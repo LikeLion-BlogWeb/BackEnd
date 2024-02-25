@@ -4,7 +4,7 @@ package dev.blog.changuii.service;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.PostDTO;
-import dev.blog.changuii.dto.ResponsePostDTO;
+import dev.blog.changuii.dto.response.ResponsePostDTO;
 import dev.blog.changuii.dto.UserDTO;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;

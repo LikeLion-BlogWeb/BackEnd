@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.CommentDTO;
+import dev.blog.changuii.dto.UserDTO;
+import dev.blog.changuii.dto.response.ResponseCommentDTO;
 import dev.blog.changuii.service.CommentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,9 +62,9 @@ public class CommentControllerTest {
                 .build();
     }
 
-    private CommentDTO setId(CommentDTO comment){
-        return CommentDTO.builder()
-                .email(comment.getEmail())
+    private ResponseCommentDTO setId(CommentDTO comment){
+        return ResponseCommentDTO.builder()
+                .user(UserDTO.builder().email(comment.getEmail()).build())
                 .content(comment.getContent())
                 .postId(comment.getPostId())
                 .writeDate(comment.getWriteDate())
@@ -72,7 +74,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("댓글 작성")
     public void createComment() throws Exception {
-        CommentDTO returnValue = setId(comment1);
+        ResponseCommentDTO returnValue = setId(comment1);
 
         //given
         given(commentService.createComment(refEq(comment1)))
@@ -88,7 +90,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.id").value(returnValue.getId()))
                 .andExpect(jsonPath("$.content").value(returnValue.getContent()))
                 .andExpect(jsonPath("$.writeDate").value(returnValue.getWriteDate()))
-                .andExpect(jsonPath("$.email").value(returnValue.getEmail()))
+                .andExpect(jsonPath("$.user.email").value(returnValue.getUser().getEmail()))
                 .andExpect(jsonPath("$.postId").value(returnValue.getPostId()))
                 .andDo(print());
 
@@ -99,7 +101,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("댓글 id 기반 조회")
     public void readComment() throws Exception{
-        CommentDTO returnValue = setId(comment1);
+        ResponseCommentDTO returnValue = setId(comment1);
         long id = returnValue.getId();
 
         //given
@@ -114,7 +116,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.id").value(returnValue.getId()))
                 .andExpect(jsonPath("$.content").value(returnValue.getContent()))
                 .andExpect(jsonPath("$.writeDate").value(returnValue.getWriteDate()))
-                .andExpect(jsonPath("$.email").value(returnValue.getEmail()))
+                .andExpect(jsonPath("$.user.email").value(returnValue.getUser().getEmail()))
                 .andExpect(jsonPath("$.postId").value(returnValue.getPostId()))
                 .andDo(print());
 
@@ -125,7 +127,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("댓글 전체 조회")
     public void readAllComment() throws Exception{
-        List<CommentDTO> comments =
+        List<ResponseCommentDTO> comments =
                 Arrays.asList(setId(comment1), setId(comment2));
 
         //given
@@ -140,10 +142,10 @@ public class CommentControllerTest {
                 .andDo(print()).andReturn();
 
         //then
-        List<CommentDTO> after = new ObjectMapper()
+        List<ResponseCommentDTO> after = new ObjectMapper()
                 .readValue(
                         mvcResult.getResponse().getContentAsString(),
-                        new TypeReference<List<CommentDTO>>() {}
+                        new TypeReference<List<ResponseCommentDTO>>() {}
                 );
 
         verify(commentService).readAllComment();
@@ -156,7 +158,7 @@ public class CommentControllerTest {
     @DisplayName("게시글 기반 댓글 전체 조회")
     public void readAllByPostComment() throws Exception {
         long postId = comment1.getPostId();
-        List<CommentDTO> comments =
+        List<ResponseCommentDTO> comments =
                 Arrays.asList(setId(comment1), setId(comment2));
 
         //given
@@ -171,10 +173,9 @@ public class CommentControllerTest {
                 .andDo(print()).andReturn();
 
         //then
-        List<CommentDTO> after = new ObjectMapper()
-                .readValue(
+        List<ResponseCommentDTO> after = new ObjectMapper().readValue(
                         mvcResult.getResponse().getContentAsString(),
-                        new TypeReference<List<CommentDTO>>() {}
+                        new TypeReference<List<ResponseCommentDTO>>() {}
                 );
 
         verify(commentService).readAllByPostComment(postId);
@@ -185,7 +186,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("댓글 수정")
     public void updateComment() throws Exception {
-        CommentDTO before = setId(comment1);
+        ResponseCommentDTO before = setId(comment1);
         long id = before.getId();
         comment1.setContent("댓글을 수정했어 이건 이렇고 저건 저렇고");
         comment1.setId(id);
@@ -206,10 +207,10 @@ public class CommentControllerTest {
                 .andDo(print()).andReturn();
 
         //then
-        CommentDTO after = new ObjectMapper()
+        ResponseCommentDTO after = new ObjectMapper()
                 .readValue(
                         mvcResult.getResponse().getContentAsString(),
-                        new TypeReference<CommentDTO>() {}
+                        new TypeReference<ResponseCommentDTO>() {}
                 );
 
         verify(this.commentService).updateComment(refEq(comment1));

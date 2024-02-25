@@ -1,10 +1,9 @@
 package dev.blog.changuii.service;
 
 import dev.blog.changuii.dto.PostDTO;
-import dev.blog.changuii.dto.ResponsePostDTO;
+import dev.blog.changuii.dto.response.ResponsePostDTO;
 import dev.blog.changuii.exception.PostNotFoundException;
 import dev.blog.changuii.exception.UserNotFoundException;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
