@@ -29,6 +29,7 @@ public class PostEntity {
     private String title;
 
     @Column
+    @Lob
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
