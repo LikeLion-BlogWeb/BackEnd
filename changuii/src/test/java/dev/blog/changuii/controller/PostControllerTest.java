@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.dto.response.ResponsePostDTO;
+import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.PostNotFoundException;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.mockito.BDDMockito.*;
 import static org.assertj.core.api.Assertions.*;
@@ -69,7 +71,7 @@ public class PostControllerTest {
         long id = 1L;
         PostEntity postEntity = PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
         postEntity.setId(id);
-        ResponsePostDTO after = PostEntity.toResponseDTO(postEntity);
+        ResponsePostDTO after = PostEntity.toResponseDTO(postEntity, entity->false);
         //given
         given(postService.createPost(refEq(post1)))
                 .willReturn(after);
@@ -98,7 +100,7 @@ public class PostControllerTest {
         long id = 1L;
         PostEntity postEntity = PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
         postEntity.setId(id);
-        ResponsePostDTO after = PostEntity.toResponseDTO(postEntity);
+        ResponsePostDTO after = PostEntity.toResponseDTO(postEntity, entity->true);
         //given
         given(postService.readPost(id))
                 .willReturn(after);
@@ -157,9 +159,10 @@ public class PostControllerTest {
         postEntity2.setId(2L);
         postEntity3.setId(3L);
 
-        ResponsePostDTO after1 = PostEntity.toResponseDTO(postEntity1);
-        ResponsePostDTO after2 = PostEntity.toResponseDTO(postEntity2);
-        ResponsePostDTO after3 = PostEntity.toResponseDTO(postEntity3);
+        Predicate<CommentEntity> predicate = entity->false;
+        ResponsePostDTO after1 = PostEntity.toResponseDTO(postEntity1, predicate);
+        ResponsePostDTO after2 = PostEntity.toResponseDTO(postEntity2, predicate);
+        ResponsePostDTO after3 = PostEntity.toResponseDTO(postEntity3, predicate);
         List<ResponsePostDTO> postDTOList = Arrays.asList(after1, after2, after3);
 
         //given
@@ -218,7 +221,7 @@ public class PostControllerTest {
 
         //given
         given(postService.updatePost(refEq(after1)))
-                .willReturn(PostEntity.toResponseDTO(postEntity));
+                .willReturn(PostEntity.toResponseDTO(postEntity, entity->false));
         //when
         mockMvc.perform(
                 put("/post")

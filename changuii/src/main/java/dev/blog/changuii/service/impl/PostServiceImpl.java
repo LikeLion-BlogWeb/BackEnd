@@ -47,7 +47,7 @@ public class PostServiceImpl implements PostService {
 
         postEntity = this.postDAO.createPost(postEntity);
 
-        return PostEntity.toResponseDTO(postEntity);
+        return PostEntity.toResponseDTO(postEntity, entity -> false);
     }
 
     // Comment 오름차순 정렬
@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
 
         // 특정 게시글의 댓글도 같이 조회
 
-        ResponsePostDTO target = PostEntity.toResponseDTO(postEntity);
+        ResponsePostDTO target = PostEntity.toResponseDTO(postEntity, entity -> true);
         target.setComments(CommentEntity.toResponseCommentDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())));
 
         return target;
@@ -68,9 +68,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<ResponsePostDTO> readAllPost() {
         return PostEntity.toResponseDTOs(
-                this.postDAO.readAllOrderByWriteDatePost()
-        );
-
+                this.postDAO.readAllOrderByWriteDatePost(), entity -> false);
     }
 
     @Override
@@ -83,7 +81,7 @@ public class PostServiceImpl implements PostService {
                 PostEntity.updateEntity(before, postDTO)
         );
 
-        return PostEntity.toResponseDTO(after);
+        return PostEntity.toResponseDTO(after, entity -> false);
     }
 
     @Override

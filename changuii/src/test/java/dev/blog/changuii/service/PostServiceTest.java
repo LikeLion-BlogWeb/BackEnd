@@ -90,7 +90,7 @@ public class PostServiceTest {
         PostEntity afterPostEntity = PostDTO.toEntity(post1, userEntity1);
 
         afterPostEntity.setId(1L);
-        ResponsePostDTO before = PostEntity.toResponseDTO(afterPostEntity);
+        ResponsePostDTO before = PostEntity.toResponseDTO(afterPostEntity, entity->false);
 
 
 
@@ -119,7 +119,7 @@ public class PostServiceTest {
         long id = 1L;
         postEntity1.setId(id);
 
-        ResponsePostDTO before = PostEntity.toResponseDTO(postEntity1);
+        ResponsePostDTO before = PostEntity.toResponseDTO(postEntity1, entity->true);
 
         //given
         when(postDAO.readPost(id))
@@ -143,7 +143,7 @@ public class PostServiceTest {
 
         List<PostEntity> postEntityList = Arrays
                 .asList(postEntity1, postEntity2, postEntity3);
-        List<ResponsePostDTO> before = PostEntity.toResponseDTOs(postEntityList);
+        List<ResponsePostDTO> before = PostEntity.toResponseDTOs(postEntityList, entity->false);
 
 
         //given
@@ -167,7 +167,7 @@ public class PostServiceTest {
         postEntity1.setId(id);
 
         PostEntity updateEntity = PostEntity.updateEntity(postEntity1, post2);
-        ResponsePostDTO before = PostEntity.toResponseDTO(updateEntity);
+        ResponsePostDTO before = PostEntity.toResponseDTO(updateEntity, entity->false);
 
         //given
         when(postDAO.readPost(id))

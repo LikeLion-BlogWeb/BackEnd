@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -78,7 +80,10 @@ public class PostEntity {
                 .email(postEntity.getUser().getEmail()).build();
     }
 
-    public static ResponsePostDTO toResponseDTO(PostEntity postEntity){
+    public static ResponsePostDTO toResponseDTO(PostEntity postEntity, Predicate<CommentEntity> predicate){
+        List<CommentEntity> comments = postEntity.getComments()
+                .stream().filter(predicate).collect(Collectors.toList());
+
         return ResponsePostDTO.builder()
                 .id(postEntity.getId())
                 .title(postEntity.getTitle())
@@ -86,17 +91,14 @@ public class PostEntity {
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews())
-                .comments(CommentEntity.toResponseCommentDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .comments(
+                        CommentEntity.toResponseCommentDTOs(CommentEntity.descByWriteDateComment(comments)))
                 .user(UserEntity.toDTO(postEntity.getUser())).build();
     }
 
-    public static List<ResponsePostDTO> toResponseDTOs(List<PostEntity> postEntities){
+    public static List<ResponsePostDTO> toResponseDTOs(List<PostEntity> postEntities, Predicate<CommentEntity> predicate){
         List<ResponsePostDTO> DTOs = new ArrayList<>();
-        for(PostEntity postEntity : postEntities){
-            DTOs.add(
-              toResponseDTO(postEntity)
-            );
-        }
+        postEntities.forEach(entity -> DTOs.add(toResponseDTO(entity, predicate)));
         return DTOs;
     }
 
