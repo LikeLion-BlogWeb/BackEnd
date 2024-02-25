@@ -65,15 +65,9 @@ public class CommentEntity {
     }
 
     public static List<CommentEntity> descByWriteDateComment(List<CommentEntity> comments){
-        Collections.sort(comments, new Comparator<CommentEntity>() {
-            @Override
-            public int compare(CommentEntity o1, CommentEntity o2) {
-                if(o1.writeDate.isBefore(o2.writeDate)){
-                    return -1;
-                }else{
-                    return 1;
-                }
-            }
+        Collections.sort(comments, (o1, o2) -> {
+            if(o1.writeDate.isBefore(o2.writeDate)) return -1;
+            else return 1;
         });
         return comments;
 

@@ -2,6 +2,7 @@ package dev.blog.changuii.controller;
 
 
 import dev.blog.changuii.dto.PostDTO;
+import dev.blog.changuii.dto.ResponsePostDTO;
 import dev.blog.changuii.exception.PostNotFoundException;
 import dev.blog.changuii.service.PostService;
 import org.slf4j.Logger;
@@ -31,27 +32,27 @@ public class PostController {
     // PostNotFoundException은 ExceptionAdvisor에서 모두 처리
 
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(
+    public ResponseEntity<ResponsePostDTO> createPost(
             @Valid @RequestBody PostDTO postDTO
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(this.postService.createPost(postDTO));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDTO> readPost(
+    public ResponseEntity<ResponsePostDTO> readPost(
             @PathVariable("id") Long id
     ){
         return ResponseEntity.status(HttpStatus.OK).body(this.postService.readPost(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDTO>> readAllPost(){
+    public ResponseEntity<List<ResponsePostDTO>> readAllPost(){
         return ResponseEntity.status(HttpStatus.OK).body(this.postService.readAllPost());
     }
 
     // todo validation 어떻게 할지 고민해봐야함.
     @PutMapping
-    public ResponseEntity<PostDTO> updatePost(
+    public ResponseEntity<ResponsePostDTO> updatePost(
             @RequestBody PostDTO postDTO
     ){
         return ResponseEntity.status(HttpStatus.OK).body(this.postService.updatePost(postDTO));

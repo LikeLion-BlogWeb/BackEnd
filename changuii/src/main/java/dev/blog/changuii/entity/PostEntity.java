@@ -1,6 +1,8 @@
 package dev.blog.changuii.entity;
 
+import dev.blog.changuii.dto.CommentDTO;
 import dev.blog.changuii.dto.PostDTO;
+import dev.blog.changuii.dto.ResponsePostDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -64,17 +66,41 @@ public class PostEntity {
     private List<CommentEntity> comments = new ArrayList<>();
 
 
-    public static PostEntity DtoToEntity(PostDTO postDTO, UserEntity user){
-        return PostEntity.builder()
-                .content(postDTO.getContent())
-                .user(user)
-                .title(postDTO.getTitle())
-                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
-                .likes(postDTO.getLike())
-                .views(postDTO.getViews())
-                .category(postDTO.getCategory())
-                .build();
+    // test 코드용
+    public static PostDTO toDTO(PostEntity postEntity){
+        return PostDTO.builder()
+                .id(postEntity.getId())
+                .title(postEntity.getTitle())
+                .content(postEntity.getContent())
+                .writeDate(postEntity.getWriteDate().toString())
+                .like(postEntity.getLikes())
+                .views(postEntity.getViews())
+                .comments(CommentDTO.EntityListToDTOList(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .email(postEntity.getUser().getEmail()).build();
     }
+
+    public static ResponsePostDTO toResponseDTO(PostEntity postEntity){
+        return ResponsePostDTO.builder()
+                .id(postEntity.getId())
+                .title(postEntity.getTitle())
+                .content(postEntity.getContent())
+                .writeDate(postEntity.getWriteDate().toString())
+                .like(postEntity.getLikes())
+                .views(postEntity.getViews())
+                .comments(CommentDTO.EntityListToDTOList(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .user(UserEntity.toDTO(postEntity.getUser())).build();
+    }
+
+    public static List<ResponsePostDTO> toResponseDTOs(List<PostEntity> postEntities){
+        List<ResponsePostDTO> DTOs = new ArrayList<>();
+        for(PostEntity postEntity : postEntities){
+            DTOs.add(
+              toResponseDTO(postEntity)
+            );
+        }
+        return DTOs;
+    }
+
 
     public static PostEntity initEntity(PostDTO postDTO, UserEntity user){
         return PostEntity.builder()

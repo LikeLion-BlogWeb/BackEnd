@@ -97,4 +97,12 @@ public class UserEntity implements UserDetails {
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
     }
+
+    public static UserDTO toDTO(UserEntity userEntity){
+        return UserDTO.builder()
+                .email(userEntity.getEmail())
+                .name(userEntity.getName())
+                .build();
+    }
+
 }

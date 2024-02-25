@@ -47,9 +47,9 @@ public class AuthServiceTest {
 
     @BeforeEach
     public void setUp(){
-        user1 = new UserDTO("asd123@naver.com", "12345678");
-        user2 = new UserDTO("abcdefg@naver.com", "87654321");
-        user3 = new UserDTO("abc123@daum.net", "24682468");
+        user1 = new UserDTO("asd123@naver.com", "12345678", "창의");
+        user2 = new UserDTO("abcdefg@naver.com", "87654321", "시영");
+        user3 = new UserDTO("abc123@daum.net", "24682468", "현민");
     }
 
     @Test

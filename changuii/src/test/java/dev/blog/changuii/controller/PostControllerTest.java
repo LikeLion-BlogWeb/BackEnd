@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.blog.changuii.config.security.JwtProvider;
 import dev.blog.changuii.dto.PostDTO;
+import dev.blog.changuii.dto.ResponsePostDTO;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.PostNotFoundException;
@@ -66,10 +67,9 @@ public class PostControllerTest {
     @DisplayName("post create test")
     public void createPostTest() throws Exception {
         long id = 1L;
-        PostDTO after = PostDTO
-                .entityToDTO(PostEntity
-                        .initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
-        after.setId(id);
+        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
+        postEntity.setId(id);
+        ResponsePostDTO after = PostEntity.toResponseDTO(postEntity);
         //given
         given(postService.createPost(refEq(post1)))
                 .willReturn(after);
@@ -83,7 +83,8 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.title").value(post1.getTitle()))
                 .andExpect(jsonPath("$.content").value(post1.getContent()))
-                .andExpect(jsonPath("$.email").value(post1.getEmail()))
+                //
+                .andExpect(jsonPath("$.user.email").value(post1.getEmail()))
                 .andExpect(jsonPath("$.like").value(new ArrayList<>()))
                 .andExpect(jsonPath("$.views").value(0))
                 .andDo(print());
@@ -95,10 +96,9 @@ public class PostControllerTest {
     @DisplayName("read post test")
     public void readPostTest() throws Exception {
         long id = 1L;
-        PostDTO after = PostDTO
-                .entityToDTO(PostEntity
-                        .initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
-        after.setId(id);
+        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
+        postEntity.setId(id);
+        ResponsePostDTO after = PostEntity.toResponseDTO(postEntity);
         //given
         given(postService.readPost(id))
                 .willReturn(after);
@@ -112,7 +112,9 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.title").value(post1.getTitle()))
                 .andExpect(jsonPath("$.content").value(post1.getContent()))
-                .andExpect(jsonPath("$.email").value(post1.getEmail()))
+                // 변경 ResponsePostDTO는 이메일이 아닌 userDTO 반환
+                .andExpect(jsonPath("$.user.email").value(post1.getEmail()))
+                .andExpect(jsonPath("$.user.name").value("창의"))
                 .andExpect(jsonPath("$.like").value(new ArrayList<>()))
                 .andExpect(jsonPath("$.views").value(0))
                 .andDo(print());
@@ -148,14 +150,17 @@ public class PostControllerTest {
     @Test
     @DisplayName("read all post test")
     public void readAllPostTest() throws Exception {
+        PostEntity postEntity1 = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
+        PostEntity postEntity2 = PostEntity.initEntity(post2, UserEntity.builder().email(post2.getEmail()).name("시영").build());
+        PostEntity postEntity3 = PostEntity.initEntity(post3, UserEntity.builder().email(post3.getEmail()).name("현민").build());
+        postEntity1.setId(1L);
+        postEntity2.setId(2L);
+        postEntity3.setId(3L);
 
-        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
-        after1.setId(1L);
-        PostDTO after2 = PostDTO.entityToDTO(PostEntity.initEntity(post2, UserEntity.builder().email(post2.getEmail()).build()));
-        after2.setId(2L);
-        PostDTO after3 = PostDTO.entityToDTO(PostEntity.initEntity(post3, UserEntity.builder().email(post3.getEmail()).build()));
-        after3.setId(3L);
-        List<PostDTO> postDTOList = Arrays.asList(after1, after2, after3);
+        ResponsePostDTO after1 = PostEntity.toResponseDTO(postEntity1);
+        ResponsePostDTO after2 = PostEntity.toResponseDTO(postEntity2);
+        ResponsePostDTO after3 = PostEntity.toResponseDTO(postEntity3);
+        List<ResponsePostDTO> postDTOList = Arrays.asList(after1, after2, after3);
 
         //given
         given(postService.readAllPost())
@@ -193,29 +198,27 @@ public class PostControllerTest {
 
         // 이 방식을 사용할때 서블릿 설정으로 utf-8을 설정해야 응답의 한글값이 깨지지 않는다.
         ObjectMapper mapper = new ObjectMapper();
-        List<PostDTO> after = mapper.readValue(
+        List<ResponsePostDTO> after = mapper.readValue(
                 result.getResponse().getContentAsString()
-                , new TypeReference<List<PostDTO>>() {});
+                , new TypeReference<List<ResponsePostDTO>>() {});
 
         //then
         verify(postService).readAllPost();
 
         assertThat(after).usingRecursiveComparison().isEqualTo(postDTOList);
 
-
-
-
     }
 
     @Test
     @DisplayName("update post test")
     public void updatePostTest() throws Exception {
-        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
-        after1.setId(1L);
+        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
+        postEntity.setId(1L);
+        PostDTO after1 = PostEntity.toDTO(postEntity);
 
         //given
         given(postService.updatePost(refEq(after1)))
-                .willReturn(after1);
+                .willReturn(PostEntity.toResponseDTO(postEntity));
         //when
         mockMvc.perform(
                 put("/post")
@@ -226,7 +229,9 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.id").value(after1.getId()))
                 .andExpect(jsonPath("$.title").value(after1.getTitle()))
                 .andExpect(jsonPath("$.content").value(after1.getContent()))
-                .andExpect(jsonPath("$.email").value(after1.getEmail()))
+                // ReponsePostDTO로 변경 email -> userDTO
+                .andExpect(jsonPath("$.user.email").value(after1.getEmail()))
+
                 .andExpect(jsonPath("$.like").value(after1.getLike()))
                 .andExpect(jsonPath("$.views").value(after1.getViews()))
                 .andDo(print());
@@ -238,8 +243,9 @@ public class PostControllerTest {
     @Test
     @DisplayName("not found post update test")
     public void notFoundPostUpdateTest() throws Exception {
-        PostDTO after1 = PostDTO.entityToDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
+        PostDTO after1 = PostEntity.toDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after1.setId(1L);
+
         Throwable e = new PostNotFoundException();
 
         //given

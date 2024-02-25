@@ -1,9 +1,11 @@
 package dev.blog.changuii.dto;
 import dev.blog.changuii.entity.PostEntity;
+import dev.blog.changuii.entity.UserEntity;
 import lombok.*;
 import org.hibernate.validator.constraints.*;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,27 +47,16 @@ public class PostDTO {
     @Builder.Default
     private List<CommentDTO> comments = new ArrayList<>();
 
-
-    public static PostDTO entityToDTO(PostEntity postEntity){
-        return PostDTO.builder()
-                .id(postEntity.getId())
-                .title(postEntity.getTitle())
-                .content(postEntity.getContent())
-                .email(postEntity.getUser().getEmail())
-                .writeDate(postEntity.getWriteDate().toString())
-                .like(postEntity.getLikes())
-                .views(postEntity.getViews())
-                .category(postEntity.getCategory()).build();
-    }
-    public static List<PostDTO> entityListToDTOList(List<PostEntity> postEntityList){
-        List<PostDTO> postDTOList = new ArrayList<>();
-        for(PostEntity postEntity : postEntityList){
-            postDTOList.add(
-                    PostDTO.entityToDTO(postEntity)
-            );
-        }
-
-        return postDTOList;
+    public static PostEntity toEntity(PostDTO postDTO, UserEntity user){
+        return PostEntity.builder()
+                .content(postDTO.getContent())
+                .user(user)
+                .title(postDTO.getTitle())
+                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
+                .likes(postDTO.getLike())
+                .views(postDTO.getViews())
+                .category(postDTO.getCategory())
+                .build();
     }
 
 }

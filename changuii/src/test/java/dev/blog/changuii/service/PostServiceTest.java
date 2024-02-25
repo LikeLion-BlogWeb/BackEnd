@@ -4,6 +4,7 @@ package dev.blog.changuii.service;
 import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.PostDTO;
+import dev.blog.changuii.dto.ResponsePostDTO;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.service.impl.PostServiceImpl;
@@ -63,16 +64,20 @@ public class PostServiceTest {
     public void createPostTest(){
         UserEntity user = UserEntity.builder().email(post1.getEmail()).build();
         PostEntity postEntity = PostEntity.initEntity(post1, user);
-        PostDTO before = PostDTO.entityToDTO(postEntity);
+        PostEntity afterPostEntity = PostEntity.initEntity(post1, user);
+        afterPostEntity.setId(1L);
+
+        ResponsePostDTO before = PostEntity.toResponseDTO(afterPostEntity);
 
         // given
         when(postDAO.createPost(refEq(postEntity)))
-                .thenReturn(postEntity);
+                .thenReturn(afterPostEntity);
         when(userDAO.readUser(post1.getEmail()))
                 .thenReturn(Optional.of(user));
 
+
         // when
-        PostDTO after = this.postService.createPost(post1);
+        ResponsePostDTO after = this.postService.createPost(post1);
 
 
         //then
@@ -91,14 +96,14 @@ public class PostServiceTest {
         PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
         postEntity.setId(id);
 
-        PostDTO before = PostDTO.entityToDTO(postEntity);
+        ResponsePostDTO before = PostEntity.toResponseDTO(postEntity);
 
         //given
         when(postDAO.readPost(id))
                 .thenReturn(Optional.of(postEntity));
 
         //when
-        PostDTO after = this.postService.readPost(id);
+        ResponsePostDTO after = this.postService.readPost(id);
 
         //then
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
@@ -113,10 +118,14 @@ public class PostServiceTest {
         PostEntity postEntity1 = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
         PostEntity postEntity2 = PostEntity.initEntity(post2, UserEntity.builder().email(post2.getEmail()).build());
         PostEntity postEntity3 = PostEntity.initEntity(post3, UserEntity.builder().email(post3.getEmail()).build());
+        postEntity1.setId(1L);
+        postEntity2.setId(2L);
+        postEntity3.setId(3L);
+
 
         List<PostEntity> postEntityList = Arrays
                 .asList(postEntity1, postEntity2, postEntity3);
-        List<PostDTO> before = PostDTO.entityListToDTOList(postEntityList);
+        List<ResponsePostDTO> before = PostEntity.toResponseDTOs(postEntityList);
 
 
         //given
@@ -124,7 +133,7 @@ public class PostServiceTest {
                 .thenReturn(postEntityList);
 
         //when
-        List<PostDTO> after = this.postService.readAllPost();
+        List<ResponsePostDTO> after = this.postService.readAllPost();
 
         //then
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
@@ -140,7 +149,7 @@ public class PostServiceTest {
         PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
         postEntity.setId(id);
         PostEntity updateEntity = PostEntity.updateEntity(postEntity, post2);
-        PostDTO before = PostDTO.entityToDTO(updateEntity);
+        ResponsePostDTO before = PostEntity.toResponseDTO(updateEntity);
 
         //given
         when(postDAO.readPost(id))
@@ -150,7 +159,7 @@ public class PostServiceTest {
 
         //when
         post2.setId(id);
-        PostDTO after = this.postService.updatePost(post2);
+        ResponsePostDTO after = this.postService.updatePost(post2);
 
         //then
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
