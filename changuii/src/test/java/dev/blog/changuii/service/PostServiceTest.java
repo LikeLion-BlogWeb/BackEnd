@@ -5,6 +5,7 @@ import dev.blog.changuii.dao.PostDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.dto.ResponsePostDTO;
+import dev.blog.changuii.dto.UserDTO;
 import dev.blog.changuii.entity.PostEntity;
 import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.service.impl.PostServiceImpl;
@@ -41,6 +42,15 @@ public class PostServiceTest {
     private PostDTO post1;
     private PostDTO post2;
     private PostDTO post3;
+    private UserDTO user1;
+    private UserDTO user2;
+    private UserDTO user3;
+
+    private UserEntity userEntity1;
+
+    private PostEntity postEntity1;
+    private PostEntity postEntity2;
+    private PostEntity postEntity3;
 
     public PostServiceTest(
             @Autowired PostService postService
@@ -56,24 +66,39 @@ public class PostServiceTest {
                 .title("게시글입니다람쥐").content("테스트용용").email("abcdefg@naver.com").writeDate("2024-02-02T13:30:23").build();
         post3 = PostDTO.builder()
                 .title("게시글입니다람쥐썬더").content("테스트용용용").email("abc123@daum.net").writeDate("2024-02-03T17:20:23").build();
+
+        user1 = UserDTO.builder()
+                .email("asd123@naver.com").password("1234").name("창의").build();
+        user2 = UserDTO.builder()
+                .email("abcdefg@naver.com").password("1234").name("시영").build();
+        user3 = UserDTO.builder()
+                .email("abc123@daum.net").password("1234").name("현민").build();
+
+        userEntity1 = UserDTO.toEntity(user1);
+
+
+        postEntity1 = PostDTO.toEntity(post1, userEntity1);
+        postEntity2 = PostDTO.toEntity(post2, UserDTO.toEntity(user2));
+        postEntity3 = PostDTO.toEntity(post3, UserDTO.toEntity(user3));
+
     }
 
 
     @Test
     @DisplayName("create post test")
     public void createPostTest(){
-        UserEntity user = UserEntity.builder().email(post1.getEmail()).build();
-        PostEntity postEntity = PostEntity.initEntity(post1, user);
-        PostEntity afterPostEntity = PostEntity.initEntity(post1, user);
-        afterPostEntity.setId(1L);
+        PostEntity afterPostEntity = PostDTO.toEntity(post1, userEntity1);
 
+        afterPostEntity.setId(1L);
         ResponsePostDTO before = PostEntity.toResponseDTO(afterPostEntity);
 
+
+
         // given
-        when(postDAO.createPost(refEq(postEntity)))
+        when(postDAO.createPost(refEq(postEntity1)))
                 .thenReturn(afterPostEntity);
         when(userDAO.readUser(post1.getEmail()))
-                .thenReturn(Optional.of(user));
+                .thenReturn(Optional.of(userEntity1));
 
 
         // when
@@ -83,7 +108,7 @@ public class PostServiceTest {
         //then
         assertThat(after).usingRecursiveComparison().isEqualTo(before);
 
-        verify(postDAO).createPost(refEq(postEntity));
+        verify(postDAO).createPost(refEq(postEntity1));
         verify(userDAO).readUser(post1.getEmail());
 
     }
@@ -92,15 +117,13 @@ public class PostServiceTest {
     @DisplayName("read post test")
     public void readPostTest(){
         long id = 1L;
+        postEntity1.setId(id);
 
-        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
-        postEntity.setId(id);
-
-        ResponsePostDTO before = PostEntity.toResponseDTO(postEntity);
+        ResponsePostDTO before = PostEntity.toResponseDTO(postEntity1);
 
         //given
         when(postDAO.readPost(id))
-                .thenReturn(Optional.of(postEntity));
+                .thenReturn(Optional.of(postEntity1));
 
         //when
         ResponsePostDTO after = this.postService.readPost(id);
@@ -114,14 +137,9 @@ public class PostServiceTest {
     @Test
     @DisplayName("readAllPost")
     public void readAllPostTest(){
-
-        PostEntity postEntity1 = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
-        PostEntity postEntity2 = PostEntity.initEntity(post2, UserEntity.builder().email(post2.getEmail()).build());
-        PostEntity postEntity3 = PostEntity.initEntity(post3, UserEntity.builder().email(post3.getEmail()).build());
         postEntity1.setId(1L);
         postEntity2.setId(2L);
         postEntity3.setId(3L);
-
 
         List<PostEntity> postEntityList = Arrays
                 .asList(postEntity1, postEntity2, postEntity3);
@@ -146,14 +164,14 @@ public class PostServiceTest {
     @DisplayName("update post test")
     public void updatePostTest(){
         long id = 1L;
-        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
-        postEntity.setId(id);
-        PostEntity updateEntity = PostEntity.updateEntity(postEntity, post2);
+        postEntity1.setId(id);
+
+        PostEntity updateEntity = PostEntity.updateEntity(postEntity1, post2);
         ResponsePostDTO before = PostEntity.toResponseDTO(updateEntity);
 
         //given
         when(postDAO.readPost(id))
-                .thenReturn(Optional.of(postEntity));
+                .thenReturn(Optional.of(postEntity1));
         when(postDAO.createPost(refEq(updateEntity)))
                 .thenReturn(updateEntity);
 

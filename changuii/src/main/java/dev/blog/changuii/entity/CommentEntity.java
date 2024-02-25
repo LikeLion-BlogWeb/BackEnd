@@ -5,8 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -41,13 +41,20 @@ public class CommentEntity {
     private UserEntity user;
 
 
-    public static CommentEntity DtoToEntity(CommentDTO commentDTO, UserEntity user, PostEntity post){
-        return CommentEntity.builder()
-                .content(commentDTO.getContent())
-                .writeDate(LocalDateTime.parse(commentDTO.getWriteDate()))
-                .post(post)
-                .user(user)
+    public static CommentDTO toDTO(CommentEntity comment){
+        return CommentDTO.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .writeDate(comment.getWriteDate().toString())
+                .email(comment.getUser().getEmail())
+                .postId(comment.getPost().getId())
                 .build();
+    }
+
+    public static List<CommentDTO> toDTOs(List<CommentEntity> comments){
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+        comments.forEach(entity -> commentDTOList.add(toDTO(entity)) );
+        return commentDTOList;
     }
 
 

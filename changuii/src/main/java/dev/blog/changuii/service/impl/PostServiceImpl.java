@@ -46,9 +46,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ResponsePostDTO createPost(PostDTO postDTO) throws UserNotFoundException{
-
-        PostEntity postEntity = PostEntity
-                .initEntity(postDTO, this.findUser(postDTO.getEmail()));
+        PostEntity postEntity = PostDTO
+                .toEntity(postDTO, this.findUser(postDTO.getEmail()));
 
         postEntity = this.postDAO.createPost(postEntity);
 
@@ -65,17 +64,17 @@ public class PostServiceImpl implements PostService {
         // 특정 게시글의 댓글도 같이 조회
 
         ResponsePostDTO target = PostEntity.toResponseDTO(postEntity);
-        target.setComments(CommentDTO.EntityListToDTOList(CommentEntity.descByWriteDateComment(postEntity.getComments())));
+        target.setComments(CommentEntity.toDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())));
 
         return target;
     }
 
     @Override
     public List<ResponsePostDTO> readAllPost() {
-
         return PostEntity.toResponseDTOs(
                 this.postDAO.readAllOrderByWriteDatePost()
         );
+
     }
 
     @Override

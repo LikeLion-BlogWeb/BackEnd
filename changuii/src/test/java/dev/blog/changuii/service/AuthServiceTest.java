@@ -56,7 +56,7 @@ public class AuthServiceTest {
     @DisplayName("회원가입")
     public void signUpTest(){
         // given
-        UserEntity userEntity = UserEntity.initUserEntity(user1);
+        UserEntity userEntity = UserDTO.toEntity(user1);
 
         when(this.userDAO.createUser(refEq(userEntity))).thenReturn(userEntity);
         when(this.userDAO.existByEmail(userEntity.getEmail())).thenReturn(false);
@@ -112,7 +112,7 @@ public class AuthServiceTest {
     @DisplayName("로그인")
     public void signInTest(){
         //given
-        UserEntity userEntity = UserEntity.initUserEntity(user1);
+        UserEntity userEntity = UserDTO.toEntity(user1);
         String token = "ABCDEFG";
 
         when(this.userDAO.existByEmail(user1.getEmail())).thenReturn(true);
@@ -154,7 +154,7 @@ public class AuthServiceTest {
     public void passwordInvalidSignInTest(){
 
         //given
-        UserEntity userEntity = UserEntity.initUserEntity(user1);
+        UserEntity userEntity = UserDTO.toEntity(user1);
         user1.setPassword("123");
 
         when(this.userDAO.existByEmail(user1.getEmail())).thenReturn(true);

@@ -89,15 +89,6 @@ public class UserEntity implements UserDetails {
     }
 
 
-    public static UserEntity initUserEntity(UserDTO userDTO){
-        return UserEntity.builder()
-                .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
-                .name(userDTO.getName())
-                .roles(Collections.singletonList("ROLE_USER"))
-                .build();
-    }
-
     public static UserDTO toDTO(UserEntity userEntity){
         return UserDTO.builder()
                 .email(userEntity.getEmail())

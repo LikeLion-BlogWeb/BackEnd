@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             userDTO.setPassword(this.passwordEncoder.encode(userDTO.getPassword()));
-            user = UserEntity.initUserEntity(userDTO);
+            user = UserDTO.toEntity(userDTO);
 
             user = this.userDAO.createUser(user);
             return UserDTO.builder().email(user.getEmail()).build();

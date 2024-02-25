@@ -1,9 +1,11 @@
 package dev.blog.changuii.dto;
 
 
+import dev.blog.changuii.entity.UserEntity;
 import lombok.*;
 
 import javax.validation.constraints.*;
+import java.util.Collections;
 
 @Getter
 @Setter
@@ -24,5 +26,15 @@ public class UserDTO {
     private String password;
 
     private String name;
+
+
+    public static UserEntity toEntity(UserDTO userDTO){
+        return UserEntity.builder()
+                .email(userDTO.getEmail())
+                .password(userDTO.getPassword())
+                .name(userDTO.getName())
+                .roles(Collections.singletonList("ROLE_USER"))
+                .build();
+    }
 
 }

@@ -47,16 +47,19 @@ public class PostDTO {
     @Builder.Default
     private List<CommentDTO> comments = new ArrayList<>();
 
+
+    // 초기화
     public static PostEntity toEntity(PostDTO postDTO, UserEntity user){
         return PostEntity.builder()
                 .content(postDTO.getContent())
                 .user(user)
                 .title(postDTO.getTitle())
                 .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
-                .likes(postDTO.getLike())
-                .views(postDTO.getViews())
                 .category(postDTO.getCategory())
-                .build();
+
+                // 초기화 부분
+                .likes(new ArrayList<>())
+                .views(0L).build();
     }
 
 }

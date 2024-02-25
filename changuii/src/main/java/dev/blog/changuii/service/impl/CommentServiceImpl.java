@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDTO createComment(CommentDTO commentDTO)
             throws UserNotFoundException, PostNotFoundException{
-        CommentEntity comment = CommentEntity.DtoToEntity(
+        CommentEntity comment = CommentDTO.toEntity(
                 commentDTO,
                 findUser(commentDTO.getEmail()),
                 findPost(commentDTO.getPostId())
@@ -57,20 +57,20 @@ public class CommentServiceImpl implements CommentService {
 
         comment = this.commentDAO.createComment(comment);
 
-        return CommentDTO.EntityToDTO(comment);
+        return CommentEntity.toDTO(comment);
     }
 
     @Override
     public CommentDTO readComment(Long id)
             throws CommentNotFoundException {
-        return CommentDTO.EntityToDTO(
+        return CommentEntity.toDTO(
                 this.commentDAO.readComment(id)
                 .orElseThrow(CommentNotFoundException::new));
     }
 
     @Override
     public List<CommentDTO> readAllComment() {
-        return CommentDTO.EntityListToDTOList(
+        return CommentEntity.toDTOs(
                 this.commentDAO.readAllComment());
     }
 
@@ -79,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
             throws PostNotFoundException{
         PostEntity post = findPost(postId);
 
-        return CommentDTO.EntityListToDTOList(
+        return CommentEntity.toDTOs(
                 this.commentDAO.readAllByPostComment(post)
         );
     }
@@ -95,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
                 origin, commentDTO);
         after = this.commentDAO.createComment(after);
 
-        return CommentDTO.EntityToDTO(after);
+        return CommentEntity.toDTO(after);
     }
 
     @Override

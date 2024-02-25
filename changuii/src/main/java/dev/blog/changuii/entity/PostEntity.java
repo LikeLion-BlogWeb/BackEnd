@@ -22,7 +22,7 @@ public class PostEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long id;
+    private long id;
 
     @Column
     private String title;
@@ -75,7 +75,7 @@ public class PostEntity {
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews())
-                .comments(CommentDTO.EntityListToDTOList(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .comments(CommentEntity.toDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())))
                 .email(postEntity.getUser().getEmail()).build();
     }
 
@@ -87,7 +87,7 @@ public class PostEntity {
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews())
-                .comments(CommentDTO.EntityListToDTOList(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .comments(CommentEntity.toDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())))
                 .user(UserEntity.toDTO(postEntity.getUser())).build();
     }
 
@@ -99,20 +99,6 @@ public class PostEntity {
             );
         }
         return DTOs;
-    }
-
-
-    public static PostEntity initEntity(PostDTO postDTO, UserEntity user){
-        return PostEntity.builder()
-                .content(postDTO.getContent())
-                .user(user)
-                .title(postDTO.getTitle())
-                .writeDate(LocalDateTime.parse(postDTO.getWriteDate()))
-                .category(postDTO.getCategory())
-
-                // 초기화 부분
-                .likes(new ArrayList<>())
-                .views(0L).build();
     }
 
     public static PostEntity updateEntity(PostEntity postEntity, PostDTO postDTO){

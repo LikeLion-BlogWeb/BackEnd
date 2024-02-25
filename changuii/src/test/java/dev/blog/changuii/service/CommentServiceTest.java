@@ -76,9 +76,8 @@ public class CommentServiceTest {
     public void createCommentTest(){
         long id = 1L;
         comment1.setId(id);
-        CommentEntity comment = CommentEntity
-                .DtoToEntity(comment1, user1, post1);
-        CommentDTO before = CommentDTO.EntityToDTO(comment);
+        CommentEntity comment = CommentDTO.toEntity(comment1, user1, post1);
+        CommentDTO before = CommentEntity.toDTO(comment);
 
         //given
         when(this.commentDAO.createComment(refEq(comment)))
@@ -106,9 +105,8 @@ public class CommentServiceTest {
     public void readCommentTest(){
         long id = 1L;
         comment1.setId(id);
-        CommentEntity comment = CommentEntity
-                .DtoToEntity(comment1, user1, post1);
-        CommentDTO before = CommentDTO.EntityToDTO(comment);
+        CommentEntity comment = CommentDTO.toEntity(comment1, user1, post1);
+        CommentDTO before = CommentEntity.toDTO(comment);
 
         //given
         when(this.commentDAO.readComment(id))
@@ -129,9 +127,9 @@ public class CommentServiceTest {
     public void readAllCommentTest(){
 
         List<CommentEntity> comments = Arrays.asList(
-                        CommentEntity.DtoToEntity(comment1, user1, post1),
-                        CommentEntity.DtoToEntity(comment2, user2, post1));
-        List<CommentDTO> before = CommentDTO.EntityListToDTOList(comments);
+                        CommentDTO.toEntity(comment1, user1, post1),
+                        CommentDTO.toEntity(comment2, user2, post1));
+        List<CommentDTO> before = CommentEntity.toDTOs(comments);
 
         //given
         when(this.commentDAO.readAllComment())
@@ -153,9 +151,9 @@ public class CommentServiceTest {
     @DisplayName("게시글 기반 댓글 전체 조회")
     public void readAllByPostCommentTest(){
         List<CommentEntity> comments = Arrays.asList(
-                CommentEntity.DtoToEntity(comment1, user1, post1),
-                CommentEntity.DtoToEntity(comment2, user2, post1));
-        List<CommentDTO> before = CommentDTO.EntityListToDTOList(comments);
+                CommentDTO.toEntity(comment1, user1, post1),
+                CommentDTO.toEntity(comment2, user2, post1));
+        List<CommentDTO> before = CommentEntity.toDTOs(comments);
 
         //given
         when(this.postDAO.readPost(comment1.getPostId()))
@@ -180,12 +178,10 @@ public class CommentServiceTest {
     public void updateCommentTest(){
         comment1.setId(1L);
 
-        CommentEntity commentEntity = CommentEntity
-                .DtoToEntity(comment1, user1, post1);
+        CommentEntity commentEntity = CommentDTO.toEntity(comment1, user1, post1);
         comment1.setContent("수정된 댓글입니다.");
-        CommentEntity updateComment = CommentEntity
-                .DtoToEntity(comment1, user1, post1);
-        CommentDTO before = CommentDTO.EntityToDTO(updateComment);
+        CommentEntity updateComment = CommentDTO.toEntity(comment1, user1, post1);
+        CommentDTO before = CommentEntity.toDTO(updateComment);
 
         //given
         when(this.commentDAO.readComment(comment1.getId()))

@@ -67,7 +67,7 @@ public class PostControllerTest {
     @DisplayName("post create test")
     public void createPostTest() throws Exception {
         long id = 1L;
-        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
+        PostEntity postEntity = PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
         postEntity.setId(id);
         ResponsePostDTO after = PostEntity.toResponseDTO(postEntity);
         //given
@@ -96,7 +96,7 @@ public class PostControllerTest {
     @DisplayName("read post test")
     public void readPostTest() throws Exception {
         long id = 1L;
-        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
+        PostEntity postEntity = PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
         postEntity.setId(id);
         ResponsePostDTO after = PostEntity.toResponseDTO(postEntity);
         //given
@@ -150,9 +150,9 @@ public class PostControllerTest {
     @Test
     @DisplayName("read all post test")
     public void readAllPostTest() throws Exception {
-        PostEntity postEntity1 = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
-        PostEntity postEntity2 = PostEntity.initEntity(post2, UserEntity.builder().email(post2.getEmail()).name("시영").build());
-        PostEntity postEntity3 = PostEntity.initEntity(post3, UserEntity.builder().email(post3.getEmail()).name("현민").build());
+        PostEntity postEntity1 = PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).name("창의").build());
+        PostEntity postEntity2 = PostDTO.toEntity(post2, UserEntity.builder().email(post2.getEmail()).name("시영").build());
+        PostEntity postEntity3 = PostDTO.toEntity(post3, UserEntity.builder().email(post3.getEmail()).name("현민").build());
         postEntity1.setId(1L);
         postEntity2.setId(2L);
         postEntity3.setId(3L);
@@ -212,7 +212,7 @@ public class PostControllerTest {
     @Test
     @DisplayName("update post test")
     public void updatePostTest() throws Exception {
-        PostEntity postEntity = PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
+        PostEntity postEntity = PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).build());
         postEntity.setId(1L);
         PostDTO after1 = PostEntity.toDTO(postEntity);
 
@@ -243,7 +243,7 @@ public class PostControllerTest {
     @Test
     @DisplayName("not found post update test")
     public void notFoundPostUpdateTest() throws Exception {
-        PostDTO after1 = PostEntity.toDTO(PostEntity.initEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
+        PostDTO after1 = PostEntity.toDTO(PostDTO.toEntity(post1, UserEntity.builder().email(post1.getEmail()).build()));
         after1.setId(1L);
 
         Throwable e = new PostNotFoundException();

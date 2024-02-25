@@ -132,7 +132,7 @@ public class AuthControllerTest {
         String token = "Bearer ";
         // given
         given(authService.signin(refEq(user1)))
-                .willReturn(TokenDTO.makeTokenDTO(UserEntity.initUserEntity(user1), token));
+                .willReturn(TokenDTO.makeTokenDTO(UserDTO.toEntity(user1), token));
 
         //when
         mockMvc.perform(
