@@ -78,6 +78,7 @@ public class PostEntity {
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews())
                 .comments(CommentEntity.toDTOs(CommentEntity.descByWriteDateComment(postEntity.getComments())))
+                .category(postEntity.getCategory())
                 .email(postEntity.getUser().getEmail()).build();
     }
 
@@ -92,6 +93,7 @@ public class PostEntity {
                 .writeDate(postEntity.getWriteDate().toString())
                 .like(postEntity.getLikes())
                 .views(postEntity.getViews())
+                .category(postEntity.getCategory())
                 .comments(
                         CommentEntity.toResponseCommentDTOs(CommentEntity.descByWriteDateComment(comments)))
                 .user(UserEntity.toDTO(postEntity.getUser())).build();
