@@ -74,6 +74,7 @@ public class CommentEntity {
     }
 
 
+    // Comment 수정
     public static CommentEntity updateComment(CommentEntity origin, CommentDTO updateValue){
         return CommentEntity.builder()
                 // 수정 불가능
@@ -87,11 +88,9 @@ public class CommentEntity {
                 .build();
     }
 
+    // 최근 작성된 순으로 정렬
     public static List<CommentEntity> descByWriteDateComment(List<CommentEntity> comments){
-        Collections.sort(comments, (o1, o2) -> {
-            if(o1.writeDate.isBefore(o2.writeDate)) return -1;
-            else return 1;
-        });
+        Collections.sort(comments, (o1, o2) -> o1.writeDate.isBefore(o2.writeDate) ? -1 : 1);
         return comments;
 
 
