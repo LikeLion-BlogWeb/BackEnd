@@ -37,6 +37,9 @@ public class PostServiceTest {
     @MockBean
     private UserDAO userDAO;
 
+    @MockBean
+    private StatisticsService statisticsService;
+
     private final PostService postService;
 
     private PostDTO post1;
