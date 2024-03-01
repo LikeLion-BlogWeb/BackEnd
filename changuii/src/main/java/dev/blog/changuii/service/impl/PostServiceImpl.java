@@ -1,20 +1,25 @@
 package dev.blog.changuii.service.impl;
 
 import dev.blog.changuii.dao.PostDAO;
+import dev.blog.changuii.dao.StatisticsDAO;
 import dev.blog.changuii.dao.UserDAO;
 import dev.blog.changuii.dto.PostDTO;
 import dev.blog.changuii.dto.response.ResponsePostDTO;
 import dev.blog.changuii.entity.CommentEntity;
 import dev.blog.changuii.entity.PostEntity;
+import dev.blog.changuii.entity.StatisticsEntity;
 import dev.blog.changuii.entity.UserEntity;
 import dev.blog.changuii.exception.PostNotFoundException;
 import dev.blog.changuii.exception.UserNotFoundException;
 import dev.blog.changuii.service.PostService;
+import dev.blog.changuii.service.StatisticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +29,14 @@ public class PostServiceImpl implements PostService {
     private final static Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PostDAO postDAO;
     private final UserDAO userDAO;
+    private final StatisticsService statisticsService;
 
     public PostServiceImpl(
+            @Autowired StatisticsService statisticsService,
             @Autowired PostDAO postDAO,
             @Autowired UserDAO userDAO
     ){
+        this.statisticsService = statisticsService;
         this.userDAO = userDAO;
         this.postDAO = postDAO;
     }
@@ -67,6 +75,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<ResponsePostDTO> readAllPost() {
+        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        statisticsService.addViews(date);
+
         return PostEntity.toResponseDTOs(
                 this.postDAO.readAllOrderByWriteDatePost(), entity -> false);
     }
