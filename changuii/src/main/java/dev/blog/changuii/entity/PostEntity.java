@@ -82,6 +82,7 @@ public class PostEntity {
                 .email(postEntity.getUser().getEmail()).build();
     }
 
+    // predicate는 댓글을 필터처리할 때 사용한다. (댓글 반환 여부)
     public static ResponsePostDTO toResponseDTO(PostEntity postEntity, Predicate<CommentEntity> predicate){
         List<CommentEntity> comments = postEntity.getComments()
                 .stream().filter(predicate).collect(Collectors.toList());
