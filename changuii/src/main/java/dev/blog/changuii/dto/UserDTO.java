@@ -27,6 +27,8 @@ public class UserDTO {
 
     private String name;
 
+    private String profileImage;
+
 
     public static UserEntity toEntity(UserDTO userDTO){
         return UserEntity.builder()

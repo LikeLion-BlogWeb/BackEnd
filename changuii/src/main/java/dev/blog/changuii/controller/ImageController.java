@@ -28,14 +28,14 @@ public class ImageController {
     public ResponseEntity<List<ResponseImageDTO>> uploadImage(
             @RequestPart("image") List<MultipartFile> images
     ){
-        return ResponseEntity.status(201).body(this.imageService.upload(images));
+        return ResponseEntity.status(201).body(this.imageService.uploadImages(images));
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
     public ResponseEntity<byte[]> downloadImage(
             @PathVariable("id") long id
             ){
-        return ResponseEntity.status(200).body(this.imageService.download(id));
+        return ResponseEntity.status(200).body(this.imageService.downloadImage(id));
     }
 
 

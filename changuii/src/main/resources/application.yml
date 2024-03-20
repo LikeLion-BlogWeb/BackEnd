@@ -1,5 +1,8 @@
 
 # default
+application:
+  url: https://likelion-blog-api.p-e.kr
+
 spring:
   profiles:
     active: dev

@@ -5,6 +5,7 @@ import dev.blog.changuii.dto.response.ResponseImageDTO;
 import dev.blog.changuii.entity.ImageEntity;
 import dev.blog.changuii.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +17,9 @@ import java.util.stream.Collectors;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageDAO imageDAO;
-    private final String url = "https://likelion-blog-api.p-e.kr/image/download/";
+
+    @Value("${application.url}")
+    private String url;
 
     public ImageServiceImpl(
             @Autowired ImageDAO imageDAO
@@ -25,7 +28,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<ResponseImageDTO> upload(List<MultipartFile> images) {
+    public List<ResponseImageDTO> uploadImages(List<MultipartFile> images) {
         return images.stream()
                 .map(a->{
                     ImageEntity image;
@@ -34,12 +37,21 @@ public class ImageServiceImpl implements ImageService {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    return ResponseImageDTO.builder().url(this.url+image.getId()).build();
+                    return ResponseImageDTO.builder().url(this.url + "/image/" +image.getId()).build();
                 }).collect(Collectors.toList());
     }
 
     @Override
-    public byte[] download(long id) {
+    public byte[] downloadImage(long id) {
         return this.imageDAO.readImage(id).get().getImage();
     }
+
+    @Override
+    public boolean deleteImage(long id) {
+        // 1번 이미지는 삭제 불가
+        if(id == 1L) return true;
+        return this.imageDAO.deleteImage(id);
+    }
+
+
 }

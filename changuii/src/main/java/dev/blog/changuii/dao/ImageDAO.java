@@ -8,4 +8,6 @@ public interface ImageDAO {
 
     public ImageEntity saveImage(ImageEntity image);
     public Optional<ImageEntity> readImage(long id);
+
+    public boolean deleteImage(long id);
 }

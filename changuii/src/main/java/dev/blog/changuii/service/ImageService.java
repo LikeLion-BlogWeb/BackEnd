@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ImageService {
 
-    public List<ResponseImageDTO> upload(List<MultipartFile> images);
-    public byte[] download(long id);
+    public List<ResponseImageDTO> uploadImages(List<MultipartFile> images);
+    public byte[] downloadImage(long id);
+    public boolean deleteImage(long id);
 }

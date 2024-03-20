@@ -11,6 +11,7 @@ import dev.blog.changuii.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class AuthServiceImpl implements AuthService {
     private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+
+    @Value("${application.url}")
+    private String url;
 
     public AuthServiceImpl(
             @Autowired JwtProvider jwtProvider,
@@ -56,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             userDTO.setPassword(this.passwordEncoder.encode(userDTO.getPassword()));
             user = UserDTO.toEntity(userDTO);
+            user.setProfileImage(url + "/image/" + 1);
 
             user = this.userDAO.createUser(user);
             return UserDTO.builder().email(user.getEmail()).build();

@@ -41,6 +41,9 @@ public class UserEntity implements UserDetails {
     private String name;
 
     @Column
+    private String profileImage;
+
+    @Column
     @ElementCollection
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -93,6 +96,7 @@ public class UserEntity implements UserDetails {
         return UserDTO.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
+                .profileImage(userEntity.getProfileImage())
                 .build();
     }
 

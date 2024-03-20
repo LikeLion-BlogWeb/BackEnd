@@ -30,4 +30,14 @@ public class ImageDAOImpl implements ImageDAO {
     public Optional<ImageEntity> readImage(long id) {
         return this.imageRepository.findById(id);
     }
+
+    @Override
+    public boolean deleteImage(long id) {
+        if(imageRepository.existsById(id)){
+            this.imageRepository.deleteById(id);
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
